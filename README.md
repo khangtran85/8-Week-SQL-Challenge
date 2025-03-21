@@ -58,6 +58,7 @@ ADD CONSTRAINT cusomter_id FOREIGN KEY (customer_id) REFERENCES members(customer
 ALTER TABLE sales
 ADD CONSTRAINT product_id FOREIGN KEY (product_id) REFERENCES menu(product_id);
 ```
+View more in [Create_DannyDiner_Dataset.sql](DannysDinner/Create_DannyDiner_Dataset.sql)
 ### Business Goals
 - *Understand visiting patterns*: Danny wants to learn how often each customer visits the restaurant.
 
