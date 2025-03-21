@@ -6,7 +6,12 @@
 Danny seriously loves Japanese food so in the beginning of 2021, he decides to embark upon a risky venture and opens up a cute little restaurant that sells his 5 favourite foods: sushi, curry, ramen, okononiyaki and yakiniku.
 
 Danny’s Diner is in need of your assistance to help the restaurant stay afloat - the restaurant has captured some very basic data from their few months of operation but have no idea how to use their data to help them run the business.
-### SQL Processing
+### Business Goals
+- *Understand visiting patterns*: Danny wants to learn how often each customer visits the restaurant.
+
+- *Analyze spending and preferences*: He is interested in knowing how much money customers spend and which menu items they prefer.
+
+- *Support loyalty strategy*: These insights will help him decide whether to expand the loyalty program and personalize the experience for loyal customers.
 
 ## Week 2: Pizza Runner
 ## Week 3: Foodie-Fi
