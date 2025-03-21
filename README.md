@@ -59,7 +59,7 @@ The case study presents 10 real-world business questions that help address the g
 
 Each question is answered in a separate SQL file stored in the [`DannysDiner/`](DannysDiner/) folder:
 
-[DannysDinner/DannyDiner_Question_1.sql](DannysDiner/DannyDiner_Question_1.sql)  
+[DannyDiner_Question_1.sql](DannysDiner/DannyDiner_Question_1.sql)  
 - [DannysDinner/DannyDiner_Question_2.sql](DannysDiner/DannyDiner_Question_2.sql)  
 - [DannysDinner/DannyDiner_Question_3.sql](DannysDiner/DannyDiner_Question_3.sql)  
 - [DannysDinner/DannyDiner_Question_4.sql](DannysDiner/DannyDiner_Question_4.sql)  
