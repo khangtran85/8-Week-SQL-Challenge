@@ -98,6 +98,26 @@ INNER JOIN menu AS t2
 INNER JOIN members AS t3
 	ON t1.customer_id = t3.customer_id;
 ```
+### Key Learnings from Danny’s Diner Case Study
+
+Working through the Danny’s Diner case study provided hands-on experience with essential SQL topics. I gained a clearer and deeper understanding of:
+
+- **Common Table Expressions (CTEs)** for simplifying complex queries and improving readability.
+- **GROUP BY aggregates** to summarize customer spending and item popularity.
+- **Window functions** to rank items, calculate running totals, and apply logic across rows.
+- **Table joins** to combine customer, sales, and membership data effectively.
+- **Data definition commands** like `CREATE TABLE`, `INSERT INTO`, and `ALTER TABLE` to structure and manage raw datasets in SQL Server.
+
+These concepts were not only studied in theory but also applied in practical ways, such as:
+
+- Building custom datasets from scratch using `CREATE TABLE` and `INSERT INTO`.
+- Updating table schemas with `ALTER TABLE` to reflect evolving data needs.
+- Identifying the most frequently ordered items using `GROUP BY` and `COUNT(*)`.
+- Calculating each customer’s total spend with aggregation and filtering.
+- Using `RANK()` and `DENSE_RANK()` (or `ROW_NUMBER()`) window functions to find first-time purchases.
+- Tracking customer behavior before and after joining the loyalty program with smart use of `JOIN` and `CASE WHEN`.
+
+This case study helped bridge the gap between foundational SQL knowledge and real-world data problem solving.
 ## Week 2: Pizza Runner
 ## Week 3: Foodie-Fi
 ## Week 4: Data Bank
