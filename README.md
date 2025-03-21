@@ -7,7 +7,7 @@ Danny seriously loves Japanese food so in the beginning of 2021, he decides to e
 
 Danny’s Diner is in need of your assistance to help the restaurant stay afloat - the restaurant has captured some very basic data from their few months of operation but have no idea how to use their data to help them run the business.
 ### Dataset
-![Danny's Diner.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDinner/Danny's%20Diner.png)
+![Danny's Diner.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/Danny's%20Diner.png)
 
 Use SQL Server to create the dataset using the CREATE TABLE and INSERT INTO statements.
 ``` SQL
@@ -41,22 +41,21 @@ View more in the [DannysDinner/Create_DannysDiner_Dataset.sql](DannysDiner/Creat
 
 - *Support loyalty strategy*: These insights will help him decide whether to expand the loyalty program and personalize the experience for loyal customers.
 
-## Case Study Questions
+### Case Study Questions
 The case study presents 10 real-world business questions that help address the goals above:
 
-1. What is the total amount each customer spent at the restaurant?  
-2. How many days has each customer visited the restaurant?  
-3. What was the first item from the menu purchased by each customer?  
-4. What is the most purchased item on the menu and how many times was it purchased by all customers?  
-5. Which item was the most popular for each customer?  
+1. What is the total amount each customer spent at the restaurant?
+2. How many days has each customer visited the restaurant?
+3. What was the first item from the menu purchased by each customer?
+4. What is the most purchased item on the menu and how many times was it purchased by all customers?
+5. Which item was the most popular for each customer?
 6. Which item was purchased first by the customer after they became a member?  
-7. Which item was purchased just before the customer became a member?  
-8. What is the total items and amount spent for each member before they became a member?  
-9. If each $1 spent equates to 10 points and each sushi has a 2x points multiplier, how many points would each customer have?  
+7. Which item was purchased just before the customer became a member?
+8. What is the total items and amount spent for each member before they became a member?
+9. If each $1 spent equates to 10 points and each sushi has a 2x points multiplier, how many points would each customer have?
 10. In the first week after a customer joins the program (including their join date), they earn 2x points on all items — how many points do customer A and B have?
 
-## 📂 SQL Scripts
-
+### SQL Scripts
 Each question is answered in a separate SQL file stored in the [`DannysDiner/`](DannysDiner/) folder:
 
 - [DannysDiner/DannysDiner_Question_1.sql](DannysDinner/DannysDiner_Question_1.sql)
@@ -70,11 +69,35 @@ Each question is answered in a separate SQL file stored in the [`DannysDiner/`](
 - [DannysDiner/DannysDiner_Question_9.sql](DannysDiner/DannysDiner_Question_9.sql)
 - [DannysDiner/DannysDiner_Question_10.sql](DannysDiner/DannysDiner_Question_10.sql)
 
-👉 **Explore all solutions in the [`DannysDiner`](DannysDiner/) folder.**
+**Explore all solutions in the [`DannysDiner`](DannysDiner/) folder.**
+### Highlighted Query
+One of the standout queries isn't necessarily complex, but it's powerful in the insight it delivers: it shows how **Window functions** can be elegantly combined within a **CASE WHEN** statement. This technique not only enhances readability but also reduces the overall length of the query significantly.
 
-## ✨ Highlighted Query
-
-Example: Finding each customer's most frequently ordered item using `RANK()`:
+```sql
+USE DannysDinerDBUI;
+GO
+-- Rank all the things
+DROP TABLE IF EXISTS additional_table_2;
+SELECT
+	t1.customer_id,
+	t1.order_date,
+	t2.product_name,
+	t2.price,
+	CASE
+		WHEN t1.order_date >= t3.join_date THEN 'Y'
+		ELSE 'N'
+	END AS member,
+	CASE
+		WHEN t1.order_date >= t3.join_date THEN DENSE_RANK() OVER(PARTITION BY t1.customer_id ORDER BY t1.order_date ASC)
+		ELSE NULL
+	END AS ranking
+INTO additional_table_2
+FROM sales AS t1
+INNER JOIN menu AS t2
+	ON t1.product_id = t2.product_id
+INNER JOIN members AS t3
+	ON t1.customer_id = t3.customer_id;
+```
 ## Week 2: Pizza Runner
 ## Week 3: Foodie-Fi
 ## Week 4: Data Bank
