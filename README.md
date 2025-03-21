@@ -60,16 +60,15 @@ The case study presents 10 real-world business questions that help address the g
 Each question is answered in a separate SQL file stored in the [`DannysDiner/`](DannysDiner/) folder:
 
 - [DannysDiner/DannyDiner_Question_1.sql](DannysDinner/DannyDiner_Question_1.sql)
-
-- [DannyDiner_Question_2.sql](DannysDiner/DannysDiner_Question_2.sql)  
-- [DannyDiner_Question_3.sql](DannysDiner/DannysDiner_Question_3.sql)  
-- [DannyDiner_Question_4.sql](DannysDiner/DannysDiner_Question_4.sql)  
-- [DannyDiner_Question_5.sql](DannysDiner/DannysDiner_Question_5.sql)  
-- [DannysDinner/DannyDiner_Question_6.sql](DannysDiner/DannysDiner_Question_6.sql)  
-- [DannysDinner/DannyDiner_Question_7.sql](DannysDiner/DannyDiner_Question_7.sql)  
-- [DannysDinner/DannyDiner_Question_8.sql](DannysDiner/DannyDiner_Question_8.sql)  
-- [DannysDinner/DannyDiner_Question_9.sql](DannysDiner/DannyDiner_Question_9.sql)  
-- [DannysDinner/DannyDiner_Question_10.sql](DannysDiner/DannyDiner_Question_10.sql)
+- [DannysDiner/DannyDiner_Question_2.sql](DannysDiner/DannyDiner_Question_2.sql)
+- [DannysDiner/DannyDiner_Question_3.sql](DannysDiner/DannysDiner_Question_3.sql)
+- [DannysDiner/DannyDiner_Question_4.sql](DannysDiner/DannysDiner_Question_4.sql)
+- [DannysDiner/DannyDiner_Question_5.sql](DannysDiner/DannysDiner_Question_5.sql)
+- [DannysDinner/DannyDiner_Question_6.sql](DannysDiner/DannysDiner_Question_6.sql)
+- [DannysDinner/DannyDiner_Question_7.sql](DannysDiner/DannysDiner_Question_7.sql)
+- [DannysDinner/DannyDiner_Question_8.sql](DannysDiner/DannysDiner_Question_8.sql)
+- [DannysDinner/DannyDiner_Question_9.sql](DannysDiner/DannysDiner_Question_9.sql)
+- [DannysDinner/DannyDiner_Question_10.sql](DannysDiner/DannysDiner_Question_10.sql)
 
 👉 **Explore all solutions in the [`DannysDiner`](DannysDiner/) folder.**
 
