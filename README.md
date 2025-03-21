@@ -33,7 +33,7 @@ ADD CONSTRAINT cusomter_id FOREIGN KEY (customer_id) REFERENCES members(customer
 ALTER TABLE sales
 ADD CONSTRAINT product_id FOREIGN KEY (product_id) REFERENCES menu(product_id);
 ```
-View more in the [Create_DannyDiner_Dataset.sql](DannysDinner/Create_DannyDiner_Dataset.sql).
+View more in the [DannysDinner/Create_DannyDiner_Dataset.sql](DannysDinner/Create_DannyDiner_Dataset.sql).
 ### Business Goals
 - *Understand visiting patterns*: Danny wants to learn how often each customer visits the restaurant.
 
@@ -59,16 +59,16 @@ The case study presents 10 real-world business questions that help address the g
 
 Each question is answered in a separate SQL file stored in the [`DannysDiner/`](DannysDiner/) folder:
 
-- [DannyDiner_Question_1.sql](DannysDiner/DannyDiner_Question_1.sql)  
-- [DannyDiner_Question_2.sql](DannysDiner/DannyDiner_Question_2.sql)  
-- [DannyDiner_Question_3.sql](DannysDiner/DannyDiner_Question_3.sql)  
-- [DannyDiner_Question_4.sql](DannysDiner/DannyDiner_Question_4.sql)  
-- [DannyDiner_Question_5.sql](DannysDiner/DannyDiner_Question_5.sql)  
-- [DannyDiner_Question_6.sql](DannysDiner/DannyDiner_Question_6.sql)  
-- [DannyDiner_Question_7.sql](DannysDiner/DannyDiner_Question_7.sql)  
-- [DannyDiner_Question_8.sql](DannysDiner/DannyDiner_Question_8.sql)  
-- [DannyDiner_Question_9.sql](DannysDiner/DannyDiner_Question_9.sql)  
-- [DannyDiner_Question_10.sql](DannysDiner/DannyDiner_Question_10.sql)
+- [DannysDinner/DannyDiner_Question_1.sql](DannysDiner/DannyDiner_Question_1.sql)  
+- [DannysDinner/DannyDiner_Question_2.sql](DannysDiner/DannyDiner_Question_2.sql)  
+- [DannysDinner/DannyDiner_Question_3.sql](DannysDiner/DannyDiner_Question_3.sql)  
+- [DannysDinner/DannyDiner_Question_4.sql](DannysDiner/DannyDiner_Question_4.sql)  
+- [DannysDinner/DannyDiner_Question_5.sql](DannysDiner/DannyDiner_Question_5.sql)  
+- [DannysDinner/DannyDiner_Question_6.sql](DannysDiner/DannyDiner_Question_6.sql)  
+- [DannysDinner/DannyDiner_Question_7.sql](DannysDiner/DannyDiner_Question_7.sql)  
+- [DannysDinner/DannyDiner_Question_8.sql](DannysDiner/DannyDiner_Question_8.sql)  
+- [DannysDinner/DannyDiner_Question_9.sql](DannysDiner/DannyDiner_Question_9.sql)  
+- [DannysDinner/DannyDiner_Question_10.sql](DannysDiner/DannyDiner_Question_10.sql)
 
 👉 **Explore all solutions in the [`DannysDiner`](DannysDiner/) folder.**
 
