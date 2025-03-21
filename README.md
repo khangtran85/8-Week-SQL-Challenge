@@ -7,7 +7,7 @@ Danny seriously loves Japanese food so in the beginning of 2021, he decides to e
 
 Danny’s Diner is in need of your assistance to help the restaurant stay afloat - the restaurant has captured some very basic data from their few months of operation but have no idea how to use their data to help them run the business.
 ### Dataset
-![Danny's Diner.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/Danny's%20Diner.png)
+![Danny's Diner.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDinner/Danny's%20Diner.png)
 
 Use SQL Server to create the dataset using the CREATE TABLE and INSERT INTO statements.
 ``` SQL
