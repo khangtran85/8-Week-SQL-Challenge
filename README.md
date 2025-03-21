@@ -25,40 +25,15 @@ VALUES
 	('A', '2024-01-07', '5'),
 	('A', '2024-01-08', '1'),
 	('A', '2024-01-11', '1'),
-  ...
-DROP TABLE IF EXISTS menu;
-CREATE TABLE menu (
-	product_id INT PRIMARY KEY,
-	product_name VARCHAR(11),
-	price INT
-);
-INSERT INTO menu
-VALUES
-	('1', 'sushi', '10'),
-	('2', 'curry', '15'),
-	('3', 'ramen', '12'),
-	('4', 'okononiyaki', '15'),
-	('5', 'yakiniku', '20');
-DROP TABLE IF EXISTS members;
-CREATE TABLE members (
-	customer_id VARCHAR(1) PRIMARY KEY,
-	join_date DATE
-);
-INSERT INTO members
-VALUES
-	('A', '2024-08-31'),
-	('B', '2024-08-02'),
-	('C', '2024-08-26'),
-	('D', '2024-07-23'),
-	('E', '2024-07-26'),
-	('F', '2024-08-27'),
-  ...
+	...
+	...
+	...
 ALTER TABLE sales
 ADD CONSTRAINT cusomter_id FOREIGN KEY (customer_id) REFERENCES members(customer_id);
 ALTER TABLE sales
 ADD CONSTRAINT product_id FOREIGN KEY (product_id) REFERENCES menu(product_id);
 ```
-View more in [Create_DannyDiner_Dataset.sql](DannysDinner/Create_DannyDiner_Dataset.sql)
+View more in the [Create_DannyDiner_Dataset.sql](DannysDinner/Create_DannyDiner_Dataset.sql).
 ### Business Goals
 - *Understand visiting patterns*: Danny wants to learn how often each customer visits the restaurant.
 
@@ -66,6 +41,40 @@ View more in [Create_DannyDiner_Dataset.sql](DannysDinner/Create_DannyDiner_Data
 
 - *Support loyalty strategy*: These insights will help him decide whether to expand the loyalty program and personalize the experience for loyal customers.
 
+## Case Study Questions
+The case study presents 10 real-world business questions that help address the goals above:
+
+1. What is the total amount each customer spent at the restaurant?  
+2. How many days has each customer visited the restaurant?  
+3. What was the first item from the menu purchased by each customer?  
+4. What is the most purchased item on the menu and how many times was it purchased by all customers?  
+5. Which item was the most popular for each customer?  
+6. Which item was purchased first by the customer after they became a member?  
+7. Which item was purchased just before the customer became a member?  
+8. What is the total items and amount spent for each member before they became a member?  
+9. If each $1 spent equates to 10 points and each sushi has a 2x points multiplier, how many points would each customer have?  
+10. In the first week after a customer joins the program (including their join date), they earn 2x points on all items — how many points do customer A and B have?
+
+## 📂 SQL Scripts
+
+Each question is answered in a separate SQL file stored in the [`DannysDiner/`](DannysDiner/) folder:
+
+- [DannyDiner_Question_1.sql](DannysDiner/DannyDiner_Question_1.sql)  
+- [DannyDiner_Question_2.sql](DannysDiner/DannyDiner_Question_2.sql)  
+- [DannyDiner_Question_3.sql](DannysDiner/DannyDiner_Question_3.sql)  
+- [DannyDiner_Question_4.sql](DannysDiner/DannyDiner_Question_4.sql)  
+- [DannyDiner_Question_5.sql](DannysDiner/DannyDiner_Question_5.sql)  
+- [DannyDiner_Question_6.sql](DannysDiner/DannyDiner_Question_6.sql)  
+- [DannyDiner_Question_7.sql](DannysDiner/DannyDiner_Question_7.sql)  
+- [DannyDiner_Question_8.sql](DannysDiner/DannyDiner_Question_8.sql)  
+- [DannyDiner_Question_9.sql](DannysDiner/DannyDiner_Question_9.sql)  
+- [DannyDiner_Question_10.sql](DannysDiner/DannyDiner_Question_10.sql)
+
+👉 **Explore all solutions in the [`DannysDiner`](DannysDiner/) folder.**
+
+## ✨ Highlighted Query
+
+Example: Finding each customer's most frequently ordered item using `RANK()`:
 ## Week 2: Pizza Runner
 ## Week 3: Foodie-Fi
 ## Week 4: Data Bank
