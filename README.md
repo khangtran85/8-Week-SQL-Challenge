@@ -58,7 +58,7 @@ The case study presents 10 real-world business questions that help address the g
 ### SQL Scripts
 Each question is answered in a separate SQL file stored in the [`DannysDiner/`](DannysDiner/) folder:
 
-- [DannysDinner/DannysDiner_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_1.sql)
+- [DannysDiner/DannysDiner_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_1.sql)
 - [DannysDiner/DannysDiner_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_2.sql)
 - [DannysDiner/DannysDiner_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_3.sql)
 - [DannysDiner/DannysDiner_Question_4.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_4.sql)
