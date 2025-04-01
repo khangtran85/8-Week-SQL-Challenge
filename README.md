@@ -41,7 +41,7 @@ View more in the [DannysDinner/Create_DannysDiner_Dataset.sql](DannysDiner/Creat
 
 - *Support loyalty strategy*: These insights will help him decide whether to expand the loyalty program and personalize the experience for loyal customers.
 
-### Case Study Questions
+### Case Study Questions and SQL Scripts
 The case study presents 10 real-world business questions that help address the goals above:
 
 1. What is the total amount each customer spent at the restaurant?
@@ -55,20 +55,7 @@ The case study presents 10 real-world business questions that help address the g
 9. If each $1 spent equates to 10 points and each sushi has a 2x points multiplier, how many points would each customer have?
 10. In the first week after a customer joins the program (including their join date), they earn 2x points on all items — how many points do customer A and B have?
 
-### SQL Scripts
-Each question is answered in a separate SQL file stored in the [`DannysDiner/`](DannysDiner/) folder:
-- [DannysDiner/DannysDiner_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_1.sql)
-- [DannysDiner/DannysDiner_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_2.sql)
-- [DannysDiner/DannysDiner_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_3.sql)
-- [DannysDiner/DannysDiner_Question_4.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_4.sql)
-- [DannysDiner/DannysDiner_Question_5.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_5.sql)
-- [DannysDiner/DannysDiner_Question_6.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_6.sql)
-- [DannysDiner/DannysDiner_Question_7.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_7.sql)
-- [DannysDiner/DannysDiner_Question_8.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_8.sql)
-- [DannysDiner/DannysDiner_Question_9.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_9.sql)
-- [DannysDiner/DannysDiner_Question_10.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_10.sql)
-
-**Explore all solutions in the [`DannysDiner`](DannysDiner/) folder.**
+*Each question is answered in a separate SQL file stored in the [`DannysDiner/`](DannysDiner/) folder.*
 ### Highlighted Query
 One of the standout queries isn't necessarily complex, but it's powerful in the insight it delivers: it shows how **Window functions** can be elegantly combined within a **CASE WHEN** statement. This technique not only enhances readability but also reduces the overall length of the query significantly.
 
@@ -219,7 +206,7 @@ ADD CONSTRAINT FK_customer_orders_pizza_full_info_pizza_id FOREIGN KEY (pizza_id
 - **Understand customer preferences:** Identify the most popular pizzas and ordering patterns.
 
 - **Improve operational processes:** Use data to refine order fulfillment and runner assignment.
-### Case Study Questions
+### Case Study Questions and SQL Scripts
 **A. Pizza Metrics**
 
 1. How many pizzas were ordered?
@@ -275,48 +262,8 @@ ADD CONSTRAINT FK_customer_orders_pizza_full_info_pizza_id FOREIGN KEY (pizza_id
 5. If a Meat Lovers pizza is $12 and a Vegetarian is $10 (fixed prices, no extra charges), and each runner is paid $0.30 per km traveled, how much profit does Pizza Runner have left after these deliveries?
 
 **E. Bonus Questions:** If Danny wants to expand his range of pizzas, how would this impact the existing data design? Write an INSERT statement to demonstrate what would happen if a new Supreme pizza with all toppings was added to the Pizza Runner menu.
-### SQL Scripts
-Each question is answered in a separate SQL file stored in the [`PizzaRunner/`](PizzaRunner/) folder:
 
-**A. Pizza Metrics:**
-- [PizzaRunner_A_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_1.sql)
-- [PizzaRunner_A_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_2.sql)
-- [PizzaRunner_A_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_3.sql)
-- [PizzaRunner_A_Question_4.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_4.sql)
-- [PizzaRunner_A_Question_5.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_5.sql)
-- [PizzaRunner_A_Question_6.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_6.sql)
-- [PizzaRunner_A_Question_7.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_7.sql)
-- [PizzaRunner_A_Question_8.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_8.sql)
-- [PizzaRunner_A_Question_9.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_9.sql)
-- [PizzaRunner_A_Question_10.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_10.sql)
-
-**B. Runner and Customer Experience:**
-- [PizzaRunner_B_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_1.sql)
-- [PizzaRunner_B_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_2.sql)
-- [PizzaRunner_B_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_3.sql)
-- [PizzaRunner_B_Question_4.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_4.sql)
-- [PizzaRunner_B_Question_5.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_5.sql)
-- [PizzaRunner_B_Question_6.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_6.sql)
-- [PizzaRunner_B_Question_7.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_7.sql)
-
-**C. Ingredient Optimization:**
-- [PizzaRunner_C_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_1.sql)
-- [PizzaRunner_C_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_2.sql)
-- [PizzaRunner_C_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_3.sql)
-- [PizzaRunner_C_Question_4.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_4.sql)
-- [PizzaRunner_C_Question_5.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_5.sql)
-- [PizzaRunner_C_Question_6.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_6.sql)
-
-**D. Pricing and Ratings:**
-- [PizzaRunner_D_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_1.sql)
-- [PizzaRunner_D_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_2.sql)
-- [PizzaRunner_D_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_3.sql)
-- [PizzaRunner_D_Question_4.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_4.sql)
-- [PizzaRunner_D_Question_5.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_5.sql)
-- [PizzaRunner_D_Question_6.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_6.sql)
-
-**E. Bonus Questions:** [PizzaRunner/PizzaRunner_E_BonuesQuestions.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_E_BonuesQuestions.sql)
-
+*Each question is answered in a separate SQL file stored in the [`PizzaRunner/`](PizzaRunner/) folder.*
 ### Highlighted Query
 ```sql
 USE PizzaRunnerDBUI;
