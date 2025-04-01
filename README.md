@@ -57,7 +57,6 @@ The case study presents 10 real-world business questions that help address the g
 
 ### SQL Scripts
 Each question is answered in a separate SQL file stored in the [`DannysDiner/`](DannysDiner/) folder:
-
 - [DannysDiner/DannysDiner_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_1.sql)
 - [DannysDiner/DannysDiner_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_2.sql)
 - [DannysDiner/DannysDiner_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/DannysDiner_Question_3.sql)
@@ -119,6 +118,273 @@ These concepts were not only studied in theory but also applied in practical way
 
 This case study helped bridge the gap between foundational SQL knowledge and real-world data problem solving.
 ## Week 2: Pizza Runner
+### Introduction
+Did you know that over 115 million kilograms of pizza are consumed daily worldwide? (Well, according to Wikipedia anyway...)
+
+Danny was scrolling through his Instagram feed when something really caught his eye - “80s Retro Styling and Pizza Is The Future!”
+
+Danny was sold on the idea, but he knew that pizza alone was not going to help him get seed funding to expand his new Pizza Empire. So, he had one more genius idea to combine with it - he was going to Uberize it! And thus, Pizza Runner was launched!
+
+Danny started by recruiting “runners” to deliver fresh pizza from Pizza Runner Headquarters (otherwise known as Danny’s house). He also maxed out his credit card to pay freelance developers to build a mobile app to accept orders from customers.
+### Dataset
+![PizzaRunner/Pizza Runner.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/Pizza%20Runner.png)
+
+However, there are some changes.
+Use SQL Server to create the dataset using the CREATE TABLE and INSERT INTO statements. Additionally, use the UPDATE... SET... WHERE statement to handle incorrect or NULL data, along with other SQL commands to merge tables, define primary and foreign keys, and ensure data integrity.
+``` sql
+DROP TABLE IF EXISTS customer_orders;
+CREATE TABLE customer_orders (
+	order_id INT,
+	customer_id INT,
+	pizza_id INT,
+	exclusions VARCHAR(4),
+	extras VARCHAR(4),
+	order_time DATETIME2(0)
+	...
+-- Update table from Database
+-- Update 'exclusions' columns from 'customer_orders' table
+UPDATE customer_orders
+SET exclusions = NULL
+WHERE exclusions = '' OR exclusions = 'null';
+-- Update 'extras' columns from 'customer_orders' table
+UPDATE customer_orders
+SET extras = NULL
+WHERE extras = '' OR extras = 'null';
+
+DROP TABLE IF EXISTS runner_orders;
+CREATE TABLE runner_orders (
+	order_id INT,
+	runner_id INT,
+	pickup_time VARCHAR(19),
+	distance VARCHAR(7),
+	duration VARCHAR(10),
+	cancellation VARCHAR(23)
+);
+...
+-- Update 'pickup_time' columns from 'runner_orders' table
+UPDATE runner_orders
+SET
+	pickup_time = NULL,
+	distance = NULL,
+	duration = NULL
+WHERE pickup_time = 'null';
+
+ALTER TABLE runner_orders
+ALTER COLUMN pickup_time DATETIME2(0);
+
+-- Update 'distance' columns from 'runner_orders' table
+UPDATE runner_orders
+SET distance = LEFT(distance, CHARINDEX(' ', distance) - 1)
+WHERE distance LIKE '% km';
+UPDATE runner_orders
+SET distance = LEFT(distance, CHARINDEX('k', distance) - 1)
+WHERE distance LIKE '%km';
+...
+DROP TABLE IF EXISTS pizza_names;
+CREATE TABLE pizza_names (
+	pizza_id INT PRIMARY KEY,
+	pizza_name TEXT
+);
+...
+-- Set up constraint
+DROP TABLE IF EXISTS pizza_full_info;
+SELECT
+	t1.pizza_id,
+	t1.pizza_name,
+	t2.toppings
+INTO pizza_full_info
+FROM pizza_names AS t1
+INNER JOIN pizza_recipes AS t2
+	ON t1.pizza_id = t2.pizza_id;
+
+DROP TABLE pizza_names;
+DROP TABLE pizza_recipes;
+
+ALTER TABLE pizza_full_info
+ADD CONSTRAINT PK_pizza_full_info PRIMARY KEY (pizza_id);
+
+ALTER TABLE pizza_full_info
+ALTER COLUMN pizza_name VARCHAR(MAX);
+
+ALTER TABLE pizza_full_info
+ALTER COLUMN toppings VARCHAR(MAX);
+
+ALTER TABLE customer_orders
+ADD CONSTRAINT FK_customer_orders_pizza_full_info_pizza_id FOREIGN KEY (pizza_id) REFERENCES pizza_full_info(pizza_id);
+...
+```
+### Business Goals
+- **Optimize delivery efficiency:** Analyze the performance of runners, delivery times, and cancellation patterns.
+
+- **Understand customer preferences:** Identify the most popular pizzas and ordering patterns.
+
+- **Improve operational processes:** Use data to refine order fulfillment and runner assignment.
+### Case Study Questions
+**A. Pizza Metrics**
+
+1. How many pizzas were ordered?
+2. How many unique customer orders were made?
+3. How many successful orders were delivered by each runner?
+4. How many of each type of pizza was delivered?
+5. How many Vegetarian and Meatlovers pizzas were ordered by each customer?
+6. What was the maximum number of pizzas delivered in a single order?
+7. For each customer, how many delivered pizzas had at least one change and how many had no changes?
+8. How many pizzas were delivered that had both exclusions and extras?
+9. What was the total volume of pizzas ordered for each hour of the day?
+10. What was the volume of orders for each day of the week?
+
+**B. Runner and Customer Experience**
+
+1. How many runners signed up for each one-week period? (Week starts from 2021-01-01)
+2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pick up the order?
+3. Is there any relationship between the number of pizzas and how long the order takes to prepare?
+4. What was the average distance traveled for each customer?
+5. What was the difference between the longest and shortest delivery times for all orders?
+6. What was the average speed for each runner for each delivery, and do you notice any trend for these values?
+7. What is the successful delivery percentage for each runner?
+
+**C. Ingredient Optimization**
+
+1. What are the standard ingredients for each pizza?
+2. What was the most commonly added extra?
+3. What was the most common exclusion?
+4. Generate an order item for each record in the customer_orders table in one of the following formats:
+- Meat Lovers
+- Meat Lovers - Exclude Beef
+- Meat Lovers - Extra Bacon
+- Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
+5. Generate an alphabetically ordered, comma-separated ingredient list for each pizza order, adding "2x" in front of any relevant ingredients (e.g., "Meat Lovers: 2xBacon, Beef, ... , Salami").
+  What is the total quantity of each ingredient used in all delivered pizzas, sorted by most frequent first?
+
+**D. Pricing and Ratings**
+
+1. If a Meat Lovers pizza costs $12 and Vegetarian costs $10 (no charge for changes), how much revenue has Pizza Runner made so far (excluding delivery fees)?
+2. What if there was an additional $1 charge for any pizza extras? Example: Add cheese as a $1 extra.
+3. Design an additional table for a customer rating system for runners, including a schema and sample data for successful orders (ratings from 1 to 5).
+4. Using the newly created ratings table, generate a consolidated report with the following:
+- customer_id
+- order_id
+- runner_id
+- rating
+- order_time
+- pickup_time
+- Time between order and pickup
+- Delivery duration
+- Average speed
+- Total number of pizzas
+5. If a Meat Lovers pizza is $12 and a Vegetarian is $10 (fixed prices, no extra charges), and each runner is paid $0.30 per km traveled, how much profit does Pizza Runner have left after these deliveries?
+
+**E. Bonus Questions:** If Danny wants to expand his range of pizzas, how would this impact the existing data design? Write an INSERT statement to demonstrate what would happen if a new Supreme pizza with all toppings was added to the Pizza Runner menu.
+### SQL Scripts
+Each question is answered in a separate SQL file stored in the [`PizzaRunner/`](PizzaRunner/) folder:
+
+**A. Pizza Metrics:**
+- [PizzaRunner_A_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_1.sql)
+- [PizzaRunner_A_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_2.sql)
+- [PizzaRunner_A_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_3.sql)
+- [PizzaRunner_A_Question_4.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_4.sql)
+- [PizzaRunner_A_Question_5.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_5.sql)
+- [PizzaRunner_A_Question_6.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_6.sql)
+- [PizzaRunner_A_Question_7.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_7.sql)
+- [PizzaRunner_A_Question_8.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_8.sql)
+- [PizzaRunner_A_Question_9.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_9.sql)
+- [PizzaRunner_A_Question_10.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_A_Question_10.sql)
+
+**B. Runner and Customer Experience:**
+- [PizzaRunner_B_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_1.sql)
+- [PizzaRunner_B_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_2.sql)
+- [PizzaRunner_B_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_3.sql)
+- [PizzaRunner_B_Question_4.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_4.sql)
+- [PizzaRunner_B_Question_5.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_5.sql)
+- [PizzaRunner_B_Question_6.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_6.sql)
+- [PizzaRunner_B_Question_7.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_B_Question_7.sql)
+
+**C. Ingredient Optimization:**
+- [PizzaRunner_C_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_1.sql)
+- [PizzaRunner_C_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_2.sql)
+- [PizzaRunner_C_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_3.sql)
+- [PizzaRunner_C_Question_4.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_4.sql)
+- [PizzaRunner_C_Question_5.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_5.sql)
+- [PizzaRunner_C_Question_6.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_C_Question_6.sql)
+
+**D. Pricing and Ratings:**
+- [PizzaRunner_D_Question_1.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_1.sql)
+- [PizzaRunner_D_Question_2.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_2.sql)
+- [PizzaRunner_D_Question_3.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_3.sql)
+- [PizzaRunner_D_Question_4.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_4.sql)
+- [PizzaRunner_D_Question_5.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_5.sql)
+- [PizzaRunner_D_Question_6.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_D_Question_6.sql)
+
+**E. Bonus Questions:** [PizzaRunner/PizzaRunner_E_BonuesQuestions.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/PizzaRunner_E_BonuesQuestions.sql)
+
+### Highlighted Query
+```sql
+USE PizzaRunnerDBUI;
+IF EXISTS (
+    SELECT 1 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_NAME = 'customer_orders' AND COLUMN_NAME = 'order_details'
+)
+BEGIN
+    ALTER TABLE customer_orders
+		DROP COLUMN order_details
+END;
+
+ALTER TABLE customer_orders
+ADD order_details NVARCHAR(MAX);
+
+GO
+
+WITH order_exclusions_tb AS (
+	SELECT
+		t1.order_number,
+		CONCAT('Exclude ', STRING_AGG(CAST(t3.topping_name AS VARCHAR(MAX)), ', ')) AS toppings_name_exclusions
+	FROM customer_orders AS t1
+	CROSS APPLY STRING_SPLIT(t1.exclusions, ',') AS t2
+	INNER JOIN pizza_toppings AS t3
+		ON CAST(t2.value AS INT) = t3.topping_id
+	GROUP BY t1.order_number
+),
+order_extras_tb AS (
+	SELECT
+		t1.order_number,
+		CONCAT('Extra ', STRING_AGG(CAST(t3.topping_name AS VARCHAR(MAX)), ', ')) AS toppings_name_extras
+	FROM customer_orders AS t1
+	CROSS APPLY STRING_SPLIT(t1.extras, ',') AS t2
+	INNER JOIN pizza_toppings AS t3
+		ON CAST(t2.value AS INT) = t3.topping_id
+	GROUP BY t1.order_number
+)
+UPDATE customer_orders
+SET customer_orders.order_details = order_details_tb.order_details
+FROM (
+	SELECT
+		t1.order_number,
+		t1.order_id,
+		t1.customer_id,
+		CONCAT_WS(' - ', t2.pizza_name, t3.toppings_name_exclusions, t4.toppings_name_extras) AS order_details
+	FROM customer_orders AS t1
+	INNER JOIN pizza_full_info AS t2
+		ON t1.pizza_id = t2.pizza_id
+	LEFT JOIN order_exclusions_tb AS t3
+		ON t1.order_number = t3.order_number
+	LEFT JOIN order_extras_tb AS t4
+		ON t1.order_number = t4.order_number
+) AS order_details_tb
+WHERE customer_orders.order_number = order_details_tb.order_number;
+```
+One of the interesting aspects of the query above is that the question is quite challenging and requires the use of several new functions like STRING_SPLIT and CONCAT_WS. Moreover, it is essential to get familiar with the syntax of CROSS APPLY (the key factor for the query to return the desired result) and the issues related to handling string data.
+### Key Learnings from Danny’s Diner Case Study
+The following topics relevant to the Pizza Runner case study are covered in depth in the Serious SQL course:
+
+- Common table expressions.
+- Group by aggregates.
+- Table joins.
+- String transformations.
+- Dealing with null values.
+- Regular expressions.
+- Understanding and using `CROSS APPLY` with `STRING_SPLIT`.
+
 ## Week 3: Foodie-Fi
 ## Week 4: Data Bank
 ## Week 5: Data Mart
