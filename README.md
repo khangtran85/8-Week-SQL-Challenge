@@ -333,9 +333,53 @@ The following topics relevant to the Pizza Runner case study are covered in dept
 - Understanding and using `CROSS APPLY` with `STRING_SPLIT`.
 
 ## Week 3: Foodie-Fi
+### Introduction
+### Business Goals
+### Case Study Questions and SQL Scripts
+**A. Customer Journey**
+
+Based off the 8 sample customers provided in the sample from the subscriptions table, write a brief description about each customer’s onboarding journey.
+
+Try to keep it as short as possible - you may also want to run some sort of join to make your explanations a bit easier!
+
+- *Customer 1:* Started with a free trial. After the 7-day period, the system automatically upgraded the subscription to the Pro monthly plan.
+- *Customer 2:* Started with a free trial. As the trial was about to expire, the user directly upgraded to the Pro annual plan.
+- *Customer 11:* Started with a free trial. At the end of the trial period, the customer chose to cancel the subscription and leave.
+- *Customer 13:* Started with a free trial. As the trial was nearing its end, the customer subscribed to the Basic plan and later upgraded to the Pro monthly plan.
+- *Customer 15:* Started with a free trial. When the trial expired, the system automatically subscribed the customer to the Pro monthly plan, but they later chose to cancel and leave.
+- *Customer 16:* Started with a free trial. As the trial was about to expire, the customer subscribed to the Basic plan and later upgraded to the Pro annual plan.
+- *Customer 18:* Started with a free trial. As the trial was nearing its end, the system automatically subscribed the customer to the Pro monthly plan.
+- *Customer 19:* Started with a free trial. As the trial was about to expire, the system automatically subscribed the customer to the Pro monthly plan, which was later upgraded to the Pro annual plan.
+### Highlighted Query
+### Key Learnings from Foodie-Fi Case Study
 ## Week 4: Data Bank
+### Introduction
+### Business Goals
+### Case Study Questions and SQL Scripts
+### Highlighted Query
+### Key Learnings from Data Bank Case Study
 ## Week 5: Data Mart
+### Introduction
+### Business Goals
+### Case Study Questions and SQL Scripts
+### Highlighted Query
+### Key Learnings from Data Mart Case Study
 ## Week 6: Clique Bait
+### Introduction
+### Business Goals
+### Case Study Questions and SQL Scripts
+### Highlighted Query
+### Key Learnings from Clique Bait Case Study
 ## Week 7: Balanced Tree Clothing Co.
+### Introduction
+### Business Goals
+### Case Study Questions and SQL Scripts
+### Highlighted Query
+### Key Learnings from Balanced Tree Clothing Co. Case Study
 ## Week 8: Fresh Segments
+### Introduction
+### Business Goals
+### Case Study Questions and SQL Scripts
+### Highlighted Query
+### Key Learnings from Fresh Segments Case Study
 # Consideration
