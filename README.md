@@ -334,7 +334,21 @@ The following topics relevant to the Pizza Runner case study are covered in dept
 
 ## Week 3: Foodie-Fi
 ### Introduction
+Danny saw a unique opportunity in the streaming market and launched Foodie-Fi in 2020 — a subscription-based platform dedicated solely to food-related content, offering unlimited access to exclusive cooking shows from around the world through monthly or annual plans.
+
+Built with a data-driven mindset, Foodie-Fi uses subscription data to guide key business decisions. This case study explores how digital subscription data can be analyzed to answer important business questions and support strategic growth.
+
+### Dataset
+
+![FoodieFi/Foodie-Fi.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/FoodieFi/Foodie-Fi.png)
+
 ### Business Goals
+- *Track customer subscriptions:* Understand how customers progress through free trials, paid plans, upgrades, downgrades, and churn.
+
+- *Evaluate revenue impact:* Analyze subscription timing and payment behavior to measure revenue and identify growth opportunities.
+
+- I*mprove customer retention:* Identify key drop-off points and develop strategies to encourage plan upgrades and reduce churn.
+
 ### Case Study Questions and SQL Scripts
 **A. Customer Journey**
 
@@ -350,8 +364,145 @@ Try to keep it as short as possible - you may also want to run some sort of join
 - *Customer 16:* Started with a free trial. As the trial was about to expire, the customer subscribed to the Basic plan and later upgraded to the Pro annual plan.
 - *Customer 18:* Started with a free trial. As the trial was nearing its end, the system automatically subscribed the customer to the Pro monthly plan.
 - *Customer 19:* Started with a free trial. As the trial was about to expire, the system automatically subscribed the customer to the Pro monthly plan, which was later upgraded to the Pro annual plan.
+
+**B. Data Analysis Questions**
+1. How many customers has Foodie-Fi ever had?
+2. What is the monthly distribution of trial plan start_date values for our dataset - use the start of the month as the group by value
+3. What plan start_date values occur after the year 2020 for our dataset? Show the breakdown by count of events for each plan_name
+4. What is the customer count and percentage of customers who have churned rounded to 1 decimal place?
+5. How many customers have churned straight after their initial free trial - what percentage is this rounded to the nearest whole number?
+6. What is the number and percentage of customer plans after their initial free trial?
+7. What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?
+8. How many customers have upgraded to an annual plan in 2020?
+9. How many days on average does it take for a customer to an annual plan from the day they join Foodie-Fi?
+10. Can you further breakdown this average value into 30 day periods from Question 9 (i.e. 0-30 days, 31-60 days etc).
+11. How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
+
+**C. Challenge Payment Question**
+
+The Foodie-Fi team wants you to create a new payments table for the year 2020 that includes amounts paid by each customer in the subscriptions table with the following requirements:
+
+- monthly payments always occur on the same day of month as the original start_date of any monthly paid plan
+- upgrades from basic to monthly or pro plans are reduced by the current paid amount in that month and start immediately
+- upgrades from pro monthly to pro annual are paid at the end of the current billing period and also starts at the end of the month period
+- once a customer churns they will no longer make payments
+
+*Each question is answered in a separate SQL file stored in the [`FoodieFi/`](FoodieFi/) folder.*
+
 ### Highlighted Query
+One of the best things about the query is recursion; it is the best solution for the problem, and using this approach has significantly reduced the time spent writing the code.
+``` sql
+DROP TABLE IF EXISTS payments;
+WITH subscription_orders_tb AS (
+	SELECT 
+		t1.customer_id,
+		t1.plan_id,
+		t2.plan_name,
+		t2.price,
+		t1.start_date AS payment_date,
+		LAG(t2.plan_name, 1) OVER (PARTITION BY t1.customer_id ORDER BY t1.start_date) AS previous_plan,
+		LAG(t1.start_date, 1) OVER (PARTITION BY t1.customer_id ORDER BY t1.start_date) AS previous_payment_date,
+		LEAD(t2.plan_name, 1) OVER (PARTITION BY t1.customer_id ORDER BY t1.start_date) AS next_plan,
+		LEAD(t1.start_date, 1) OVER (PARTITION BY t1.customer_id ORDER BY t1.start_date) AS next_payment_date
+	FROM subscriptions AS t1
+	JOIN plans AS t2
+		ON t1.plan_id = t2.plan_id
+	WHERE t1.start_date < '2021-01-01' AND t2.plan_name <> 'trial'
+),
+recursive_payments_tb AS (
+	SELECT
+		customer_id,
+		plan_id,
+		plan_name,
+		price,
+		CASE
+			WHEN plan_name = 'pro annual' AND previous_plan = 'pro monthly' AND payment_date <= DATEADD(month, MONTH(payment_date) - MONTH(previous_payment_date), previous_payment_date) THEN DATEADD(month, MONTH(payment_date) - MONTH(previous_payment_date), previous_payment_date)
+			ELSE payment_date
+		END AS payment_date,
+		previous_plan,
+		previous_payment_date,
+		next_plan,
+		next_payment_date,
+		CASE
+			WHEN plan_name <> previous_plan AND previous_plan IS NOT NULL AND payment_date < DATEADD(month, MONTH(payment_date) - MONTH(previous_payment_date), previous_payment_date) THEN 1
+			ELSE 0
+		END AS reduce_pro_amount_tick
+	FROM subscription_orders_tb
+	WHERE plan_name NOT LIKE 'churn'
+	
+	UNION ALL
+
+	SELECT
+		customer_id,
+		plan_id,
+		plan_name,
+		price,
+		CASE
+			WHEN next_payment_date IS NULL AND next_plan IS NULL AND plan_name IN ('basic monthly', 'pro monthly') THEN DATEADD(month, 1, payment_date)
+			WHEN next_payment_date IS NULL AND next_plan IS NULL AND plan_name = 'pro annual' THEN DATEADD(year, 1, payment_date)
+			WHEN next_payment_date IS NOT NULL AND next_plan IS NOT NULL AND plan_name = 'basic monthly' AND next_plan IN ('pro monthly', 'pro annual') AND DATEADD(month, 1, payment_date) < next_payment_date THEN DATEADD(month, 1, payment_date)
+			WHEN next_payment_date IS NOT NULL AND next_plan IS NOT NULL AND plan_name = 'pro monthly' AND next_plan = 'pro annual' AND DATEADD(month, 1, payment_date) < next_payment_date THEN DATEADD(month, 1, payment_date)
+			ELSE payment_date
+		END AS payment_date,
+		previous_plan,
+		previous_payment_date,
+		next_plan,
+		next_payment_date,
+		reduce_pro_amount_tick * 1
+	FROM recursive_payments_tb
+	WHERE
+		plan_name NOT LIKE 'churn'
+		AND payment_date < '2021-01-01'
+		AND ((next_payment_date IS NULL AND next_plan iS NULL AND plan_name IN ('basic monthly', 'pro monthly') AND DATEADD(month, 1, payment_date) < '2021-01-01')
+			OR (next_payment_date IS NULL AND next_plan iS NULL AND plan_name LIKE 'pro annual' AND DATEADD(year, 1, payment_date) < '2021-01-01')
+			OR (next_payment_date IS NOT NULL AND next_plan IS NOT NULL AND plan_name = 'basic monthly' AND next_plan IN ('pro monthly', 'pro annual') AND DATEADD(month, 1, payment_date) < next_payment_date AND DATEADD(month, 1, payment_date) < '2021-01-01')
+			OR (next_payment_date IS NOT NULL AND next_plan IS NOT NULL AND plan_name = 'pro monthly' AND next_plan = 'pro annual' AND DATEADD(month, 1, payment_date) < next_payment_date AND DATEADD(month, 1, payment_date) < '2021-01-01'))
+),
+initial_payment_schedule_tb AS (
+	SELECT
+		customer_id,
+		plan_id,
+		plan_name,
+		payment_date,
+		price,
+		LAG(plan_name, 1) OVER(PARTITION BY customer_id ORDER BY payment_date ASC) AS previous_plan,
+		LAG(payment_date) OVER(PARTITION BY customer_id ORDER BY payment_date ASC) AS previous_payment_date,
+		reduce_pro_amount_tick,
+		ROW_NUMBER()
+			OVER(
+				PARTITION BY customer_id
+				ORDER BY payment_date ASC
+			) AS payment_order
+	FROM recursive_payments_tb
+)
+SELECT
+	customer_id,
+	plan_id,
+	plan_name,
+	payment_date,
+	CASE
+		WHEN plan_name IN ('pro monthly', 'pro annual') AND previous_plan = 'basic monthly' AND payment_date < DATEADD(month, 1, previous_payment_date) THEN CAST((price - 9.90) AS DECIMAL(5, 2))
+		WHEN plan_name = 'pro annual' AND previous_plan = 'pro monthly' AND reduce_pro_amount_tick = 1 THEN CAST((price - 19.90) AS DECIMAL(5, 2))
+		ELSE price
+	END AS amount,
+	payment_order
+INTO payments
+FROM initial_payment_schedule_tb
+ORDER BY customer_id ASC, payment_date ASC;
+```
 ### Key Learnings from Foodie-Fi Case Study
+Working through the Clique Bait case study provided practical experience with advanced SQL techniques. I developed a deeper understanding of:
+- **Recursive CTEs** for handling hierarchical data and performing complex traversals in self-referencing tables.
+- Window functions like ROW_NUMBER(), LEAD() and LAG() for ranking and calculating engagement metrics across multiple data levels.
+- Aggregations using GROUP BY to summarize user activity and identify key patterns.
+- CASE WHEN logic for segmenting users based on specific behaviors or milestones.
+
+These concepts were applied practically, such as:
+- Building recursive queries using CTEs to track user journeys and product recommendations.
+- Using window functions to rank and identify significant events in user engagement.
+- Applying CASE WHEN for behavior-based segmentation of users.
+- Recursive CTEs in SQL Server.
+
 ## Week 4: Data Bank
 ### Introduction
 ### Business Goals
