@@ -1,5 +1,6 @@
 # 8-Week-SQL-Challenge
 8 Week SQL Challenge is a series of SQL exercises designed to enhance data querying skills through real-world scenarios. Each challenge covers key SQL concepts like JOINs, CTEs, and Window Functions. Work with datasets on customer behavior, sales, finance, and more. Clone the repo, explore challenges, and level up your SQL skills!
+
 # Processing
 ## Week 1: Danny's Diner
 ### Introduction
@@ -12,6 +13,7 @@ Danny’s Diner is in need of your assistance to help the restaurant stay afloat
 Use SQL Server to create the dataset using the CREATE TABLE and INSERT INTO statements.
 
 View more in the [DannysDinner/Create_DannysDiner_Dataset.sql](DannysDiner/Create_DannysDiner_Dataset.sql).
+
 ### Business Goals
 - *Understand visiting patterns*: Danny wants to learn how often each customer visits the restaurant.
 
@@ -82,6 +84,7 @@ These concepts were not only studied in theory but also applied in practical way
 - Tracking customer behavior before and after joining the loyalty program with smart use of `JOIN` and `CASE WHEN`.
 
 This case study helped bridge the gap between foundational SQL knowledge and real-world data problem solving.
+
 ## Week 2: Pizza Runner
 ### Introduction
 Did you know that over 115 million kilograms of pizza are consumed daily worldwide? (Well, according to Wikipedia anyway...)
@@ -91,6 +94,7 @@ Danny was scrolling through his Instagram feed when something really caught his 
 Danny was sold on the idea, but he knew that pizza alone was not going to help him get seed funding to expand his new Pizza Empire. So, he had one more genius idea to combine with it - he was going to Uberize it! And thus, Pizza Runner was launched!
 
 Danny started by recruiting “runners” to deliver fresh pizza from Pizza Runner Headquarters (otherwise known as Danny’s house). He also maxed out his credit card to pay freelance developers to build a mobile app to accept orders from customers.
+
 ### Dataset
 ![PizzaRunner/Pizza Runner.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/Pizza%20Runner.png)
 
@@ -105,6 +109,7 @@ View more in the [PizzaRunner/Create_PizzaRunner_Dataset.sql](PizzaRunner/Create
 - **Understand customer preferences:** Identify the most popular pizzas and ordering patterns.
 
 - **Improve operational processes:** Use data to refine order fulfillment and runner assignment.
+
 ### Case Study Questions and SQL Scripts
 **A. Pizza Metrics**
 
@@ -140,7 +145,7 @@ View more in the [PizzaRunner/Create_PizzaRunner_Dataset.sql](PizzaRunner/Create
 - Meat Lovers - Extra Bacon
 - Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
 5. Generate an alphabetically ordered, comma-separated ingredient list for each pizza order, adding "2x" in front of any relevant ingredients (e.g., "Meat Lovers: 2xBacon, Beef, ... , Salami").
-  What is the total quantity of each ingredient used in all delivered pizzas, sorted by most frequent first?
+6. What is the total quantity of each ingredient used in all delivered pizzas, sorted by most frequent first?
 
 **D. Pricing and Ratings**
 
@@ -163,6 +168,7 @@ View more in the [PizzaRunner/Create_PizzaRunner_Dataset.sql](PizzaRunner/Create
 **E. Bonus Questions:** If Danny wants to expand his range of pizzas, how would this impact the existing data design? Write an INSERT statement to demonstrate what would happen if a new Supreme pizza with all toppings was added to the Pizza Runner menu.
 
 *Each question is answered in a separate SQL file stored in the [`PizzaRunner/`](PizzaRunner/) folder.*
+
 ### Highlighted Query
 ```sql
 USE PizzaRunnerDBUI;
@@ -220,6 +226,7 @@ FROM (
 WHERE customer_orders.order_number = order_details_tb.order_number;
 ```
 One of the interesting aspects of the query above is that the question is quite challenging and requires the use of several new functions like STRING_SPLIT and CONCAT_WS. Moreover, it is essential to get familiar with the syntax of CROSS APPLY (the key factor for the query to return the desired result) and the issues related to handling string data.
+
 ### Key Learnings from Danny’s Diner Case Study
 The following topics relevant to the Pizza Runner case study are covered in depth in the Serious SQL course:
 
@@ -374,30 +381,39 @@ These concepts were applied practically, such as:
 
 ## Week 4: Data Bank
 ### Introduction
+### Dataset
 ### Business Goals
 ### Case Study Questions and SQL Scripts
 ### Highlighted Query
 ### Key Learnings from Data Bank Case Study
+
 ## Week 5: Data Mart
 ### Introduction
+### Dataset
 ### Business Goals
 ### Case Study Questions and SQL Scripts
 ### Highlighted Query
 ### Key Learnings from Data Mart Case Study
+
 ## Week 6: Clique Bait
 ### Introduction
+### Dataset
 ### Business Goals
 ### Case Study Questions and SQL Scripts
 ### Highlighted Query
 ### Key Learnings from Clique Bait Case Study
+
 ## Week 7: Balanced Tree Clothing Co.
 ### Introduction
+### Dataset
 ### Business Goals
 ### Case Study Questions and SQL Scripts
 ### Highlighted Query
 ### Key Learnings from Balanced Tree Clothing Co. Case Study
+
 ## Week 8: Fresh Segments
 ### Introduction
+### Dataset
 ### Business Goals
 ### Case Study Questions and SQL Scripts
 ### Highlighted Query
