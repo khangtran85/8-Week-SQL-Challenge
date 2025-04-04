@@ -10,29 +10,7 @@ Danny’s Diner is in need of your assistance to help the restaurant stay afloat
 ![Danny's Diner.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DannysDiner/Danny's%20Diner.png)
 
 Use SQL Server to create the dataset using the CREATE TABLE and INSERT INTO statements.
-``` SQL
-DROP TABLE IF EXISTS sales;
-CREATE TABLE sales (
-	customer_id VARCHAR(1),
-	order_date DATE,
-	product_id INT
-);
-INSERT INTO sales
-VALUES
-	('A', '2024-01-03', '2'),
-	('A', '2024-01-03', '3'),
-	('A', '2024-01-07', '2'),
-	('A', '2024-01-07', '5'),
-	('A', '2024-01-08', '1'),
-	('A', '2024-01-11', '1'),
-	...
-	...
-	...
-ALTER TABLE sales
-ADD CONSTRAINT cusomter_id FOREIGN KEY (customer_id) REFERENCES members(customer_id);
-ALTER TABLE sales
-ADD CONSTRAINT product_id FOREIGN KEY (product_id) REFERENCES menu(product_id);
-```
+
 View more in the [DannysDinner/Create_DannysDiner_Dataset.sql](DannysDiner/Create_DannysDiner_Dataset.sql).
 ### Business Goals
 - *Understand visiting patterns*: Danny wants to learn how often each customer visits the restaurant.
@@ -118,88 +96,9 @@ Danny started by recruiting “runners” to deliver fresh pizza from Pizza Runn
 
 However, there are some changes.
 Use SQL Server to create the dataset using the CREATE TABLE and INSERT INTO statements. Additionally, use the UPDATE... SET... WHERE statement to handle incorrect or NULL data, along with other SQL commands to merge tables, define primary and foreign keys, and ensure data integrity.
-``` sql
-DROP TABLE IF EXISTS customer_orders;
-CREATE TABLE customer_orders (
-	order_id INT,
-	customer_id INT,
-	pizza_id INT,
-	exclusions VARCHAR(4),
-	extras VARCHAR(4),
-	order_time DATETIME2(0)
-	...
--- Update table from Database
--- Update 'exclusions' columns from 'customer_orders' table
-UPDATE customer_orders
-SET exclusions = NULL
-WHERE exclusions = '' OR exclusions = 'null';
--- Update 'extras' columns from 'customer_orders' table
-UPDATE customer_orders
-SET extras = NULL
-WHERE extras = '' OR extras = 'null';
 
-DROP TABLE IF EXISTS runner_orders;
-CREATE TABLE runner_orders (
-	order_id INT,
-	runner_id INT,
-	pickup_time VARCHAR(19),
-	distance VARCHAR(7),
-	duration VARCHAR(10),
-	cancellation VARCHAR(23)
-);
-...
--- Update 'pickup_time' columns from 'runner_orders' table
-UPDATE runner_orders
-SET
-	pickup_time = NULL,
-	distance = NULL,
-	duration = NULL
-WHERE pickup_time = 'null';
+View more in the [PizzaRunner/Create_PizzaRunner_Dataset.sql](PizzaRunner/Create_PizzaRunner_Dataset.sql).
 
-ALTER TABLE runner_orders
-ALTER COLUMN pickup_time DATETIME2(0);
-
--- Update 'distance' columns from 'runner_orders' table
-UPDATE runner_orders
-SET distance = LEFT(distance, CHARINDEX(' ', distance) - 1)
-WHERE distance LIKE '% km';
-UPDATE runner_orders
-SET distance = LEFT(distance, CHARINDEX('k', distance) - 1)
-WHERE distance LIKE '%km';
-...
-DROP TABLE IF EXISTS pizza_names;
-CREATE TABLE pizza_names (
-	pizza_id INT PRIMARY KEY,
-	pizza_name TEXT
-);
-...
--- Set up constraint
-DROP TABLE IF EXISTS pizza_full_info;
-SELECT
-	t1.pizza_id,
-	t1.pizza_name,
-	t2.toppings
-INTO pizza_full_info
-FROM pizza_names AS t1
-INNER JOIN pizza_recipes AS t2
-	ON t1.pizza_id = t2.pizza_id;
-
-DROP TABLE pizza_names;
-DROP TABLE pizza_recipes;
-
-ALTER TABLE pizza_full_info
-ADD CONSTRAINT PK_pizza_full_info PRIMARY KEY (pizza_id);
-
-ALTER TABLE pizza_full_info
-ALTER COLUMN pizza_name VARCHAR(MAX);
-
-ALTER TABLE pizza_full_info
-ALTER COLUMN toppings VARCHAR(MAX);
-
-ALTER TABLE customer_orders
-ADD CONSTRAINT FK_customer_orders_pizza_full_info_pizza_id FOREIGN KEY (pizza_id) REFERENCES pizza_full_info(pizza_id);
-...
-```
 ### Business Goals
 - **Optimize delivery efficiency:** Analyze the performance of runners, delivery times, and cancellation patterns.
 
@@ -342,6 +241,8 @@ Built with a data-driven mindset, Foodie-Fi uses subscription data to guide key 
 
 ![FoodieFi/Foodie-Fi.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/FoodieFi/Foodie-Fi.png)
 
+View more in the [FoodieFi/Create_FoodieFi_Dataset.sql](FoodieFi/Create_FoodieFi_Dataset.sql).
+
 ### Business Goals
 - *Track customer subscriptions:* Understand how customers progress through free trials, paid plans, upgrades, downgrades, and churn.
 
@@ -392,7 +293,6 @@ The Foodie-Fi team wants you to create a new payments table for the year 2020 th
 ### Highlighted Query
 One of the best things about the query is recursion; it is the best solution for the problem, and using this approach has significantly reduced the time spent writing the code.
 ``` sql
-DROP TABLE IF EXISTS payments;
 WITH subscription_orders_tb AS (
 	SELECT 
 		t1.customer_id,
@@ -457,38 +357,7 @@ recursive_payments_tb AS (
 			OR (next_payment_date IS NULL AND next_plan iS NULL AND plan_name LIKE 'pro annual' AND DATEADD(year, 1, payment_date) < '2021-01-01')
 			OR (next_payment_date IS NOT NULL AND next_plan IS NOT NULL AND plan_name = 'basic monthly' AND next_plan IN ('pro monthly', 'pro annual') AND DATEADD(month, 1, payment_date) < next_payment_date AND DATEADD(month, 1, payment_date) < '2021-01-01')
 			OR (next_payment_date IS NOT NULL AND next_plan IS NOT NULL AND plan_name = 'pro monthly' AND next_plan = 'pro annual' AND DATEADD(month, 1, payment_date) < next_payment_date AND DATEADD(month, 1, payment_date) < '2021-01-01'))
-),
-initial_payment_schedule_tb AS (
-	SELECT
-		customer_id,
-		plan_id,
-		plan_name,
-		payment_date,
-		price,
-		LAG(plan_name, 1) OVER(PARTITION BY customer_id ORDER BY payment_date ASC) AS previous_plan,
-		LAG(payment_date) OVER(PARTITION BY customer_id ORDER BY payment_date ASC) AS previous_payment_date,
-		reduce_pro_amount_tick,
-		ROW_NUMBER()
-			OVER(
-				PARTITION BY customer_id
-				ORDER BY payment_date ASC
-			) AS payment_order
-	FROM recursive_payments_tb
 )
-SELECT
-	customer_id,
-	plan_id,
-	plan_name,
-	payment_date,
-	CASE
-		WHEN plan_name IN ('pro monthly', 'pro annual') AND previous_plan = 'basic monthly' AND payment_date < DATEADD(month, 1, previous_payment_date) THEN CAST((price - 9.90) AS DECIMAL(5, 2))
-		WHEN plan_name = 'pro annual' AND previous_plan = 'pro monthly' AND reduce_pro_amount_tick = 1 THEN CAST((price - 19.90) AS DECIMAL(5, 2))
-		ELSE price
-	END AS amount,
-	payment_order
-INTO payments
-FROM initial_payment_schedule_tb
-ORDER BY customer_id ASC, payment_date ASC;
 ```
 ### Key Learnings from Foodie-Fi Case Study
 Working through the Clique Bait case study provided practical experience with advanced SQL techniques. I developed a deeper understanding of:
