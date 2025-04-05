@@ -323,7 +323,7 @@ recursive_payments_tb AS (
 		plan_name,
 		price,
 		CASE
-			WHEN plan_name = 'pro annual' AND previous_plan = 'pro monthly' AND payment_date <= DATEADD(month, MONTH(payment_date) - MONTH(previous_payment_date), previous_payment_date) THEN DATEADD(month, MONTH(payment_date) - MONTH(previous_payment_date), previous_payment_date)
+			WHEN plan_name = 'pro annual' AND previous_plan = 'pro monthly' AND payment_date < DATEADD(month, MONTH(payment_date) - MONTH(previous_payment_date) + 1, previous_payment_date) THEN DATEADD(month, MONTH(payment_date) - MONTH(previous_payment_date), previous_payment_date)
 			ELSE payment_date
 		END AS payment_date,
 		previous_plan,
@@ -331,7 +331,7 @@ recursive_payments_tb AS (
 		next_plan,
 		next_payment_date,
 		CASE
-			WHEN plan_name <> previous_plan AND previous_plan IS NOT NULL AND payment_date < DATEADD(month, MONTH(payment_date) - MONTH(previous_payment_date), previous_payment_date) THEN 1
+			WHEN plan_name = 'pro annual' AND previous_plan = 'pro monthly' AND payment_date < DATEADD(month, MONTH(payment_date) - MONTH(previous_payment_date) + 1, previous_payment_date) THEN 1
 			ELSE 0
 		END AS reduce_pro_amount_tick
 	FROM subscription_orders_tb
