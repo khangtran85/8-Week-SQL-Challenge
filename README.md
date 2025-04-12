@@ -376,7 +376,7 @@ This case study explores how Data Bank leverages data analytics to track custome
 ### Dataset
 ![DataBank/Data Bank.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DataBank/Data%20Bank.png)
 
-View more in the [DataBank/Create_DataBank_Dataset.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DataBank/Create_DataBank_Dataset.sql).
+View more in the [DataBank/Create_DataBank_Dataset.sql](DataBank/Create_DataBank_Dataset.sql).
 ### Business Goals
 - *Map system structure:* Explore node distribution and customer reallocation patterns.
 - *Analyze transaction behavior:* Review deposit trends, balances, and monthly activity.
@@ -530,7 +530,7 @@ Data Mart is Danny’s newest project, focused on delivering fresh produce throu
 
 ![DataMart/Data Mart.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DataMart/Data%20Mart.png)
 
-View more in the [DataMart/Create_DataMart_Dataset.sql](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DataMart/Create_DataMart_Dataset.sql).
+View more in the [DataMart/Create_DataMart_Dataset.sql](DataMart/Create_DataMart_Dataset.sql).
 ### Business Goals
 - *Measure impact of change:* Quantify the sales performance impact of the June 2020 sustainability update.
 - *Identify affected areas:* Determine which platforms, regions, segments, and customer types were most affected.
