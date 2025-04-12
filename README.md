@@ -37,8 +37,6 @@ The case study presents 10 real-world business questions that help address the g
 
 *Each question is answered in a separate SQL file stored in the [`DannysDiner/`](DannysDiner/) folder.*
 ### Highlighted Query
-One of the standout queries isn't necessarily complex, but it's powerful in the insight it delivers: it shows how **Window functions** can be elegantly combined within a **CASE WHEN** statement. This technique not only enhances readability but also reduces the overall length of the query significantly.
-
 ```sql
 USE DannysDinerDBUI;
 GO
@@ -298,7 +296,6 @@ The Foodie-Fi team wants you to create a new payments table for the year 2020 th
 *Each question is answered in a separate SQL file stored in the [`FoodieFi/`](FoodieFi/) folder.*
 
 ### Highlighted Query
-One of the best things about the query is recursion; it is the best solution for the problem, and using this approach has significantly reduced the time spent writing the code.
 ``` sql
 WITH subscription_orders_tb AS (
 	SELECT 
@@ -367,25 +364,161 @@ recursive_payments_tb AS (
 )
 ```
 ### Key Learnings from Foodie-Fi Case Study
-Working through the Clique Bait case study provided practical experience with advanced SQL techniques. I developed a deeper understanding of:
-- **Recursive CTEs** for handling hierarchical data and performing complex traversals in self-referencing tables.
+- **Recursive CTEs** for handling hierarchical data and performing complex traversals in self-referencing tables in SQL Server.
 - Window functions like ROW_NUMBER(), LEAD() and LAG() for ranking and calculating engagement metrics across multiple data levels.
-- Aggregations using GROUP BY to summarize user activity and identify key patterns.
-- CASE WHEN logic for segmenting users based on specific behaviors or milestones.
-
-These concepts were applied practically, such as:
-- Building recursive queries using CTEs to track user journeys and product recommendations.
-- Using window functions to rank and identify significant events in user engagement.
-- Applying CASE WHEN for behavior-based segmentation of users.
-- Recursive CTEs in SQL Server.
 
 ## Week 4: Data Bank
 ### Introduction
+The rise of Neo-Banks—fully digital financial institutions without physical branches—has sparked innovation across the financial sector. Inspired by this trend, Danny launched Data Bank, a next-generation digital bank that uniquely integrates cryptocurrency, financial services, and secure distributed data storage. Unlike traditional banks, Data Bank links customers' cloud storage capacity to their account balances, creating a dynamic and data-driven ecosystem.
+
+This case study explores how Data Bank leverages data analytics to track customer behavior, forecast storage needs, and support strategic growth. By calculating key business metrics and understanding usage patterns, the company aims to expand its customer base while efficiently managing its innovative service model.
+
 ### Dataset
+![DataBank/Data Bank.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DataBank/Data%20Bank.png)
 ### Business Goals
+- *Map system structure:* Explore node distribution and customer reallocation patterns.
+- *Analyze transaction behavior:* Review deposit trends, balances, and monthly activity.
+- *Estimate data needs:* Model data allocation scenarios to forecast storage demand.
 ### Case Study Questions and SQL Scripts
+**A. Customer Nodes Exploration**
+1. How many unique nodes are there on the Data Bank system?
+2. What is the number of nodes per region?
+3. How many customers are allocated to each region?
+4. How many days on average are customers reallocated to a different node?
+5. What is the median, 80th and 95th percentile for this same reallocation days metric for each region?
+
+**B. Customer Transactions**
+1. What is the unique count and total amount for each transaction type?
+2. What is the average total historical deposit counts and amounts for all customers?
+3. For each month - how many Data Bank customers make more than 1 deposit and either 1 purchase or 1 withdrawal in a single month?
+4. What is the closing balance for each customer at the end of the month?
+5. What is the percentage of customers who increase their closing balance by more than 5%?
+
+**C. Data Allocation Challenge**
+1. To test out a few different hypotheses - the Data Bank team wants to run an experiment where different groups of customers would be allocated data using 3 different options:
+- Option 1: data is allocated based off the amount of money at the end of the previous month.
+- Option 2: data is allocated on the average amount of money kept in the account in the previous 30 days.
+- Option 3: data is updated real-time.
+
+For this multi-part challenge question - you have been requested to generate the following data elements to help the Data Bank team estimate how much data will need to be provisioned for each option:
+- running customer balance column that includes the impact each transaction.
+- customer balance at the end of each month.
+- minimum, average and maximum values of the running balance for each customer.
+
+Using all of the data available - how much data would have been required for each option on a monthly basis?
+
+**D. Extra Challenge**
+
+Data Bank wants to try another option which is a bit more difficult to implement - they want to calculate data growth using an interest calculation, just like in a traditional savings account you might have with a bank.
+
+If the annual interest rate is set at 6% and the Data Bank team wants to reward its customers by increasing their data allocation based off the interest calculated on a daily basis at the end of each day, how much data would be required for this option on a monthly basis?
+
+*Special notes:* Data Bank wants an initial calculation which does not allow for compounding interest, however they may also be interested in a daily compounding interest calculation so you can try to perform this calculation if you have the stamina!
+
+*Each question is answered in a separate SQL file stored in the [`DataBank/`](DataBank/) folder.*
 ### Highlighted Query
+```sql
+USE DataBankDBUI;
+GO
+
+-- Calculation 1: Simple Interest
+-- Method 1: Transaction Interval-Based Allocation Method
+DECLARE @YearSimpleInterest AS FLOAT;
+DECLARE @DateSimpleInterest AS FLOAT;
+DECLARE @LastDate AS DATE;
+
+SET @YearSimpleInterest = 0.06;
+SET @DateSimpleInterest = @YearSimpleInterest/365;
+SET @LastDate = (SELECT EOMONTH(MAX(txn_date), 0) FROM customer_transactions);
+
+WITH customer_txn_with_next_date_in_month_and_balance_tb AS (
+	SELECT
+		customer_id,
+		txn_date,
+		LEAD(txn_date, 1)
+			OVER(
+				PARTITION BY customer_id
+				ORDER BY txn_date ASC
+			) AS next_txn_date,
+		SUM(CASE WHEN txn_type = 'deposit' THEN txn_amount ELSE txn_amount * (-1) END)
+			OVER(
+				PARTITION BY customer_id
+				ORDER BY txn_date ASC
+				ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+			) AS closing_balance
+	FROM customer_transactions
+),
+customer_txn_next_date_capped_tb AS (
+		SELECT
+		customer_id,
+		txn_date,
+		CASE
+			WHEN COALESCE(next_txn_date, @LastDate) > EOMONTH(txn_date, 0) AND FORMAT(txn_date, 'yyyy-MM') NOT LIKE FORMAT(COALESCE(next_txn_date, @LastDate), 'yyyy-MM') THEN EOMONTH(txn_date, 0)
+			WHEN COALESCE(next_txn_date, @LastDate) = @LastDate AND FORMAT(txn_date, 'yyyy-MM') LIKE FORMAT(@LastDate, 'yyyy-MM') THEN @LastDate
+			ELSE DATEADD(day, -1, COALESCE(next_txn_date, @LastDate))
+		END AS next_date_in_month,
+		COALESCE(next_txn_date, @LastDate) AS next_txn_date,
+		closing_balance
+	FROM customer_txn_with_next_date_in_month_and_balance_tb
+),
+recursive_customer_segment_date_in_month_and_balance_tb AS (
+	-- Anchor Member
+	SELECT
+		customer_id,
+		txn_date,
+		next_date_in_month,
+		next_txn_date,
+		closing_balance
+	FROM customer_txn_next_date_capped_tb
+
+	UNION ALL
+	-- Recursive Member
+	SELECT
+		customer_id,
+		DATEADD(month, 1, DATETRUNC(month, txn_date)) AS txn_date,
+		CASE
+			WHEN EOMONTH(DATEADD(month, 1, txn_date), 0) < next_txn_date AND FORMAT(DATEADD(month, 1, txn_date), 'yyyy-MM') NOT LIKE FORMAT(next_txn_date, 'yyyy-MM') THEN EOMONTH(DATEADD(month, 1, txn_date), 0)
+			WHEN (EOMONTH(DATEADD(month, 1, txn_date), 0) >= next_txn_date OR FORMAT(DATEADD(month, 1, txn_date), 'yyyy-MM') LIKE FORMAT(next_txn_date, 'yyyy-MM')) AND next_txn_date = @LastDate THEN next_txn_date
+			ELSE DATEADD(day, -1, next_txn_date)
+		END AS next_date_in_month,
+		next_txn_date,
+		closing_balance
+	FROM recursive_customer_segment_date_in_month_and_balance_tb
+	WHERE DATEADD(day, 1, next_date_in_month) < next_txn_date
+),
+customer_txn_data_transition_tb AS (
+	SELECT
+		customer_id,
+		txn_date,
+		next_date_in_month,
+		DATEDIFF(day, txn_date, next_date_in_month) + 1 AS date_diff,
+		closing_balance,
+		CASE WHEN closing_balance < 0 THEN 0 ELSE closing_balance END AS data_transition
+	FROM recursive_customer_segment_date_in_month_and_balance_tb
+),
+customer_monthly_data_allocation_tb AS (
+	SELECT
+		customer_id,
+		txn_date,
+		next_date_in_month,
+		closing_balance,
+		data_transition,
+		data_transition * date_diff * (1 + @DateSimpleInterest) AS data_allocation
+	FROM customer_txn_data_transition_tb
+)
+SELECT
+	FORMAT(txn_date, 'yyyy-MM') AS activity_month,
+	ROUND(SUM(data_allocation), 0) AS total_data
+FROM customer_monthly_data_allocation_tb
+GROUP BY FORMAT(txn_date, 'yyyy-MM')
+ORDER BY activity_month ASC;
+```
 ### Key Learnings from Data Bank Case Study
+Working through the Data Bank case study provided hands-on experience with advanced SQL techniques. I gained a deeper understanding of:
+- Using VIEW in SQL Server to simplify and organize complex query logic for repeated use.
+- Recursive queries to efficiently solve multi-step logic problems while saving significant development time.
+- Combining recursion with functions and window operations to calculate simple and compound interest dynamically for each customer on a daily basis.
+- Using DECLARE and SET to define and assign variables, allowing for flexible adjustments to input values and enabling customized data scenarios.
 
 ## Week 5: Data Mart
 ### Introduction
