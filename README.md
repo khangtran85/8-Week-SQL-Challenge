@@ -522,11 +522,212 @@ Working through the Data Bank case study provided hands-on experience with advan
 
 ## Week 5: Data Mart
 ### Introduction
+Data Mart is Danny’s newest project, focused on delivering fresh produce through an international online supermarket. In June 2020, a major operational shift introduced fully sustainable packaging across the entire supply chain. Danny now seeks analytical support to evaluate how this change has affected overall sales performance and its impact across various business segments.
+
 ### Dataset
+
+![DataMart/Data Mart.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DataMart/Data%20Mart.png)
+
 ### Business Goals
+- *Measure impact of change:* Quantify the sales performance impact of the June 2020 sustainability update.
+- *Identify affected areas:* Determine which platforms, regions, segments, and customer types were most affected.
+- *Guide future actions:* Provide insights to help reduce potential negative impacts from similar changes in the future.
+
 ### Case Study Questions and SQL Scripts
+**A. Data Cleansing Steps:** In a single query, perform the following operations and generate a new table in the data_mart schema named clean_weekly_sales:
+- Convert the week_date to a DATE format.
+- Add a week_number as the second column for each week_date value, for example any value from the 1st of January to 7th of January will be 1, 8th to 14th will be 2 etc.
+- Add a month_number with the calendar month for each week_date value as the 3rd column.
+- Add a calendar_year column as the 4th column containing either 2018, 2019 or 2020 values.
+- Add a new column called age_band after the original segment column using the following mapping on the number inside the segment value.
+- Add a new demographic column using the following mapping for the first letter in the segment values.
+- Ensure all null string values with an "unknown" string value in the original segment column as well as the new age_band and demographic columns.
+- Generate a new avg_transaction column as the sales value divided by transactions rounded to 2 decimal places for each record.
+
+**B. Data Exploration**
+1. What day of the week is used for each week_date value?
+2. What range of week numbers are missing from the dataset?
+3. How many total transactions were there for each year in the dataset?
+4. What is the total sales for each region for each month?
+5. What is the total count of transactions for each platform?
+6. What is the percentage of sales for Retail vs Shopify for each month?
+7. What is the percentage of sales by demographic for each year in the dataset?
+8. Which age_band and demographic values contribute the most to Retail sales?
+9. Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
+
+**C. Before & After Analysis**
+
+This technique is usually used when we inspect an important event and want to inspect the impact before and after a certain point in time.
+
+Taking the week_date value of 2020-06-15 as the baseline week where the Data Mart sustainable packaging changes came into effect.
+
+We would include all week_date values for 2020-06-15 as the start of the period after the change and the previous week_date values would be before
+
+Using this analysis approach - answer the following questions:
+
+- What is the total sales for the 4 weeks before and after 2020-06-15? What is the growth or reduction rate in actual values and percentage of sales?
+- What about the entire 12 weeks before and after?
+- How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019?
+
+**D. Bonus Question**
+
+Which areas of the business have the highest negative impact in sales metrics performance in 2020 for the 12 week before and after period?
+- region
+- platform
+- age_band
+- demographic
+- customer_type
+
+*Each question is answered in a separate SQL file stored in the [`DataMart/`](DataMart/) folder.*
+
 ### Highlighted Query
+```sql
+DROP TABLE IF EXISTS DataMartDBUI.dbo.clean_weekly_sales;
+CREATE TABLE DataMartDBUI.dbo.clean_weekly_sales (
+	idx INT,
+	week_date VARCHAR(7)
+);
+
+--	Convert the week_date to a DATE format.
+INSERT INTO DataMartDBUI.dbo.clean_weekly_sales (idx, week_date)
+	SELECT
+		idx,
+		week_date
+	FROM DataMartDBUI.dbo.weekly_sales
+	ORDER BY idx ASC;
+
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ALTER COLUMN week_date VARCHAR(10);
+
+GO
+
+UPDATE DataMartDBUI.dbo.clean_weekly_sales
+SET week_date = 
+	CONCAT(
+		CASE WHEN CAST(RIGHT(week_date, 2) AS INT) BETWEEN 0 AND 49 THEN '20' + RIGHT(week_date, 2) ELSE '19' + RIGHT(week_date, 2) END,
+		'-',
+		FORMAT(CAST(SUBSTRING(week_date, CHARINDEX('/', week_date, 0) + 1, CHARINDEX('/', week_date, CHARINDEX('/', week_date, 0) + 1) - CHARINDEX('/', week_date, 0) - 1) AS INT), '00'),
+		'-',
+		FORMAT(CAST(LEFT(week_date, CHARINDEX('/', week_date) - 1) AS INT), '00')
+	);
+
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ALTER COLUMN week_date DATE;
+
+GO
+--	Add a week_number as the second column for each week_date value, for example any value from the 1st of January to 7th of January will be 1, 8th to 14th will be 2 etc.
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ADD week_number INT;
+
+UPDATE DataMartDBUI.dbo.clean_weekly_sales
+SET week_number = (DATEPART(dayofyear, week_date) - 1) / 7 + 1;
+
+GO
+
+--	Add a month_number with the calendar month for each week_date value as the 3rd column.
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ADD month_number INT;
+
+UPDATE DataMartDBUI.dbo.clean_weekly_sales
+SET month_number = MONTH(week_date);
+
+GO
+-- Add a calendar_year column as the 4th column containing either 2018, 2019 or 2020 values.
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ADD year_number INT;
+
+UPDATE DataMartDBUI.dbo.clean_weekly_sales
+SET year_number = YEAR(week_date);
+
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ADD
+	region VARCHAR(13),
+	platform VARCHAR(7),
+	segment VARCHAR(4);
+
+UPDATE t1
+SET
+	t1.region = t2.region,
+	t1.platform = t2.platform,
+	t1.segment = t2.segment
+FROM DataMartDBUI.dbo.clean_weekly_sales AS t1
+INNER JOIN DataMartDBUI.dbo.weekly_sales AS t2
+	ON t1.idx = t2.idx;
+
+GO
+-- Add a new column called age_band after the original segment column using the following mapping on the number inside the segment value.
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ADD age_brand VARCHAR(12);
+
+UPDATE DataMartDBUI.dbo.clean_weekly_sales
+SET age_brand =
+	CASE
+		WHEN RIGHT(segment, 1) = '1' THEN 'Young	Adults'
+		WHEN RIGHT(segment, 1) = '2' THEN 'Middle Aged'
+		WHEN RIGHT(segment, 1) IN ('3', '4') THEN 'Retirees'
+		ELSE 'null'
+	END;
+
+GO
+-- Add a new demographic column using the following mapping for the first letter in the segment values.
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ADD demographic VARCHAR(8);
+
+UPDATE DataMartDBUI.dbo.clean_weekly_sales
+SET demographic =
+	CASE
+		WHEN LEFT(segment, 1) = 'C' THEN 'Couples'
+		WHEN LEFT(segment, 1) = 'F' THEN 'Families'
+		ELSE 'null'
+	END;
+
+GO
+-- Ensure all null string values with an "unknown" string value in the original segment column as well as the new age_band and demographic columns.
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ALTER COLUMN segment VARCHAR(7);
+
+UPDATE DataMartDBUI.dbo.clean_weekly_sales
+SET
+	segment = 'unknown',
+	age_brand = 'unknown',
+	demographic = 'unknown'
+WHERE demographic LIKE 'null';
+
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ADD
+	customer_type VARCHAR(8),
+	transactions BIGINT,
+	sales BIGINT;
+
+GO
+-- Generate a new avg_transaction column as the sales value divided by transactions rounded to 2 decimal places for each record.
+UPDATE t1
+SET
+	t1.customer_type = t2.customer_type,
+	t1.transactions = t2.transactions,
+	t1.sales = t2.sales
+FROM DataMartDBUI.dbo.clean_weekly_sales AS t1
+INNER JOIN DataMartDBUI.dbo.weekly_sales AS t2
+	ON t1.idx = t2.idx;
+
+ALTER TABLE DataMartDBUI.dbo.clean_weekly_sales
+ADD avg_transaction DECIMAL(5, 2);
+
+GO
+
+UPDATE DataMartDBUI.dbo.clean_weekly_sales
+SET avg_transaction = CAST(sales AS FLOAT) / CAST(transactions AS FLOAT);
+
+GO
+
+SELECT *
+FROM DataMartDBUI.dbo.clean_weekly_sales;
+```
 ### Key Learnings from Data Mart Case Study
+- Gained experience in data cleansing and transformation using SQL commands like UPDATE SET, ALTER TABLE, ALTER COLUMN, and ALTER ADD to modify and structure the dataset.
+- Enhanced data quality by creating new calculated columns and applying functions to standardize formats, such as using CONCAT and FORMAT to modify date formats.
+- Utilized UPDATE SET for data updates and INNER JOIN to merge data from different sources for more comprehensive analysis.
+- Applied ALTER TABLE to add, modify, and drop columns based on the evolving requirements of the dataset, ensuring better structure for analysis.
 
 ## Week 6: Clique Bait
 ### Introduction
