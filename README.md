@@ -734,10 +734,156 @@ FROM DataMartDBUI.dbo.clean_weekly_sales;
 
 ## Week 6: Clique Bait
 ### Introduction
+Balanced Tree Clothing Company is a modern fashion brand known for its curated range of clothing and lifestyle wear designed for today’s adventurers. Danny, the CEO, has requested support in analyzing sales performance and preparing a financial report to inform broader business decisions.
+
 ### Dataset
+![CliqueBait/Clique Bait.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/CliqueBait/Clique%20Bait.png)
+
+View more in the [CliqueBait/Create_CliqueBait_Dataset.sql](CliqueBait/Create_CliqueBait_Dataset.sql).
 ### Business Goals
+- *Digital Analysis:* Understand user behavior, event interactions, and key conversion metrics.
+- *Product Funnel:* Track product and category performance from view to purchase.
+- *Campaign Impact:* Assess how marketing campaigns influence user engagement and sales.
+
 ### Case Study Questions and SQL Scripts
+**A. Digital Analysis**
+1. How many users are there?
+2. How many cookies does each user have on average?
+3. What is the unique number of visits by all users per month?
+4. What is the number of events for each event type?
+5. What is the percentage of visits which have a purchase event?
+6. What is the percentage of visits which view the checkout page but do not have a purchase event?
+7. What are the top 3 pages by number of views?
+8. What is the number of views and cart adds for each product category?
+9. What are the top 3 products by purchases?
+
+**B. Product Funnel Analysis**
+
+Using a single SQL query - create a new output table which has the following details:
+- How many times was each product viewed?
+- How many times was each product added to cart?
+- How many times was each product added to a cart but not purchased (abandoned)?
+- How many times was each product purchased?
+
+Additionally, create another table which further aggregates the data for the above points but this time for each product category instead of individual products.
+
+Use your 2 new output tables - answer the following questions:
+- Which product had the most views, cart adds and purchases?
+- Which product was most likely to be abandoned?
+- Which product had the highest view to purchase percentage?
+- What is the average conversion rate from view to cart add?
+- What is the average conversion rate from cart add to purchase?
+
+**C. Campaigns Analysis**
+
+Generate a table that has 1 single row for every unique visit_id record and has the following columns:
+- user_id
+- visit_id
+- visit_start_time: the earliest event_time for each visit
+- page_views: count of page views for each visit
+- cart_adds: count of product cart add events for each visit
+- purchase: 1/0 flag if a purchase event exists for each visit
+- campaign_name: map the visit to a campaign if the visit_start_time falls between the start_date and end_date
+- impression: count of ad impressions for each visit
+- click: count of ad clicks for each visit
+- (Optional column) cart_products: a comma separated text value with products added to the cart sorted by the order they were added to the cart (hint: use the sequence_number)
+
+Some ideas you might want to investigate further include:
+- Identifying users who have received impressions during each campaign period and comparing each metric with other users who did not have an impression event.
+- Does clicking on an impression lead to higher purchase rates?
+- What is the uplift in purchase rate when comparing users who click on a campaign impression versus users who do not receive an impression? What if we compare them with users who just an impression but do not click?
+- What metrics can you use to quantify the success or failure of each campaign compared to eachother?
 ### Highlighted Query
+```sql
+USE CliqueBaitDBUI;
+GO
+
+WITH campaign_behavior_metrics_by_impression_tb AS (
+	SELECT
+		'Total page views' AS campaign_metrics,
+		SUM(CASE WHEN campaign_name IS NOT NULL AND impression > 0 THEN page_views ELSE 0 END) AS visit_received_impression_gp,
+		SUM(CASE WHEN campaign_name IS NOT NULL AND impression = 0 THEN page_views ELSE 0 END) AS visit_no_received_impression_gp
+	FROM user_campaign_interaction_summary_tb
+
+	UNION ALL
+
+	SELECT
+		'Total cart adds' AS campaign_metrics,
+		SUM(CASE WHEN campaign_name IS NOT NULL AND impression > 0 THEN cart_adds ELSE 0 END) AS visit_received_impression_gp,
+		SUM(CASE WHEN campaign_name IS NOT NULL AND impression = 0 THEN cart_adds ELSE 0 END) AS visit_no_received_impression_gp
+	FROM user_campaign_interaction_summary_tb
+
+	UNION ALL
+
+	SELECT
+		'Total purchases' AS campaign_metrics,
+		SUM(CASE WHEN campaign_name IS NOT NULL AND impression > 0 AND purchase = 1 THEN cart_adds ELSE 0 END) AS visit_received_impression_gp,
+		SUM(CASE WHEN campaign_name IS NOT NULL AND impression = 0 AND purchase = 1THEN cart_adds ELSE 0 END) AS visit_no_received_impression_gp
+	FROM user_campaign_interaction_summary_tb
+),
+purchase_rate_by_impression_group_tb AS (
+	SELECT
+		'Purchase rate' AS campaign_metrics,
+		CAST(visit_received_impression_gp AS FLOAT) / CAST((visit_received_impression_gp + visit_no_received_impression_gp) AS FLOAT) * 100 AS visit_received_impression_gp,
+		CAST(visit_no_received_impression_gp AS FLOAT) / CAST((visit_received_impression_gp + visit_no_received_impression_gp) AS FLOAT) * 100 AS visit_no_received_impression_gp
+	FROM campaign_behavior_metrics_by_impression_tb
+	WHERE campaign_metrics = 'Total purchases'
+),
+campaign_conversion_rate_by_impression_tb AS (
+	SELECT
+		'View page to Add cart Conversion rate' AS campaign_metrics,
+		CAST(t2.visit_received_impression_gp AS FLOAT) / CAST(t1.visit_received_impression_gp AS FLOAT) * 100 AS visit_received_impression_gp,
+		CAST(t2.visit_no_received_impression_gp AS FLOAT) / CAST(t1.visit_no_received_impression_gp AS FLOAT) * 100 AS visit_no_received_impression_gp
+	FROM campaign_behavior_metrics_by_impression_tb AS t1
+	CROSS JOIN campaign_behavior_metrics_by_impression_tb AS t2
+	WHERE t1.campaign_metrics = 'Total page views' AND t2.campaign_metrics = 'Total cart adds'
+
+	UNION ALL
+
+	SELECT
+		'View page to Purchase Conversion rate' AS campaign_metrics,
+		ROUND(CAST(t2.visit_received_impression_gp AS FLOAT) / CAST(t1.visit_received_impression_gp AS FLOAT) * 100, 2) AS visit_received_impression_gp,
+		ROUND(CAST(t2.visit_no_received_impression_gp AS FLOAT) / CAST(t1.visit_no_received_impression_gp AS FLOAT) * 100, 2) AS visit_no_received_impression_gp
+	FROM campaign_behavior_metrics_by_impression_tb AS t1
+	CROSS JOIN campaign_behavior_metrics_by_impression_tb AS t2
+	WHERE t1.campaign_metrics = 'Total page views' AND t2.campaign_metrics = 'Total purchases'
+
+	UNION ALL
+
+	SELECT
+		'Add cart to Purchase Conversion rate' AS campaign_metrics,
+		CAST(t2.visit_received_impression_gp AS FLOAT) / CAST(t1.visit_received_impression_gp AS FLOAT) * 100 AS visit_received_impression_gp,
+		CAST(t2.visit_no_received_impression_gp AS FLOAT) / CAST(t1.visit_no_received_impression_gp AS FLOAT) * 100 AS visit_no_received_impression_gp
+	FROM campaign_behavior_metrics_by_impression_tb AS t1
+	CROSS JOIN campaign_behavior_metrics_by_impression_tb AS t2
+	WHERE t1.campaign_metrics = 'Total cart adds' AND t2.campaign_metrics = 'Total purchases'
+),
+avg_campaign_conversion_rate_by_impression_tb AS (
+	SELECT
+		'Conversion rate Average' AS campaign_metrics,
+		AVG(visit_received_impression_gp) AS visit_received_impression_gp,
+		AVG(visit_no_received_impression_gp) AS visit_no_received_impression_gp
+	FROM campaign_conversion_rate_by_impression_tb
+)
+SELECT *
+FROM campaign_behavior_metrics_by_impression_tb
+
+UNION ALL
+
+SELECT
+	campaign_metrics,
+	ROUND(visit_received_impression_gp, 2) AS visit_received_impression_gp,
+	ROUND(visit_no_received_impression_gp, 2) AS visit_no_received_impression_gp
+FROM purchase_rate_by_impression_group_tb
+
+UNION ALL
+
+SELECT
+	campaign_metrics,
+	ROUND(visit_received_impression_gp, 2) AS visit_received_impression_gp,
+	ROUND(visit_no_received_impression_gp, 2) AS visit_no_received_impression_gp
+FROM campaign_conversion_rate_by_impression_tb;
+```
 ### Key Learnings from Clique Bait Case Study
 
 ## Week 7: Balanced Tree Clothing Co.
