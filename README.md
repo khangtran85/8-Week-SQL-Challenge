@@ -793,6 +793,8 @@ Some ideas you might want to investigate further include:
 - Does clicking on an impression lead to higher purchase rates?
 - What is the uplift in purchase rate when comparing users who click on a campaign impression versus users who do not receive an impression? What if we compare them with users who just an impression but do not click?
 - What metrics can you use to quantify the success or failure of each campaign compared to eachother?
+
+*Each question is answered in a separate SQL file stored in the [`CliqueBait/`](CliqueBait/) folder.*
 ### Highlighted Query
 ```sql
 USE CliqueBaitDBUI;
