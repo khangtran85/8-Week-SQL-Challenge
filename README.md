@@ -13,7 +13,6 @@ Danny’s Diner is in need of your assistance to help the restaurant stay afloat
 Use SQL Server to create the dataset using the CREATE TABLE and INSERT INTO statements.
 
 View more in the [DannysDinner/Create_DannysDiner_Dataset.sql](DannysDiner/Create_DannysDiner_Dataset.sql).
-
 ### Business Goals
 - *Understand visiting patterns*: Danny wants to learn how often each customer visits the restaurant.
 
@@ -63,7 +62,6 @@ INNER JOIN members AS t3
 	ON t1.customer_id = t3.customer_id;
 ```
 ### Key Learnings from Danny’s Diner Case Study
-
 Working through the Danny’s Diner case study provided hands-on experience with essential SQL topics. I gained a clearer and deeper understanding of:
 
 - **Common Table Expressions (CTEs)** for simplifying complex queries and improving readability.
@@ -82,7 +80,6 @@ These concepts were not only studied in theory but also applied in practical way
 - Tracking customer behavior before and after joining the loyalty program with smart use of `JOIN` and `CASE WHEN`.
 
 This case study helped bridge the gap between foundational SQL knowledge and real-world data problem solving.
-
 ## Week 2: Pizza Runner
 ### Introduction
 Did you know that over 115 million kilograms of pizza are consumed daily worldwide? (Well, according to Wikipedia anyway...)
@@ -92,7 +89,6 @@ Danny was scrolling through his Instagram feed when something really caught his 
 Danny was sold on the idea, but he knew that pizza alone was not going to help him get seed funding to expand his new Pizza Empire. So, he had one more genius idea to combine with it - he was going to Uberize it! And thus, Pizza Runner was launched!
 
 Danny started by recruiting “runners” to deliver fresh pizza from Pizza Runner Headquarters (otherwise known as Danny’s house). He also maxed out his credit card to pay freelance developers to build a mobile app to accept orders from customers.
-
 ### Dataset
 ![PizzaRunner/Pizza Runner.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/PizzaRunner/Pizza%20Runner.png)
 
@@ -100,17 +96,12 @@ However, there are some changes.
 Use SQL Server to create the dataset using the CREATE TABLE and INSERT INTO statements. Additionally, use the UPDATE... SET... WHERE statement to handle incorrect or NULL data, along with other SQL commands to merge tables, define primary and foreign keys, and ensure data integrity.
 
 View more in the [PizzaRunner/Create_PizzaRunner_Dataset.sql](PizzaRunner/Create_PizzaRunner_Dataset.sql).
-
 ### Business Goals
-- **Optimize delivery efficiency:** Analyze the performance of runners, delivery times, and cancellation patterns.
-
-- **Understand customer preferences:** Identify the most popular pizzas and ordering patterns.
-
-- **Improve operational processes:** Use data to refine order fulfillment and runner assignment.
-
+- *Optimize delivery efficiency:* Analyze the performance of runners, delivery times, and cancellation patterns.
+- *Understand customer preferences:* Identify the most popular pizzas and ordering patterns.
+- *Improve operational processes:* Use data to refine order fulfillment and runner assignment.
 ### Case Study Questions and SQL Scripts
 **A. Pizza Metrics**
-
 1. How many pizzas were ordered?
 2. How many unique customer orders were made?
 3. How many successful orders were delivered by each runner?
@@ -123,7 +114,6 @@ View more in the [PizzaRunner/Create_PizzaRunner_Dataset.sql](PizzaRunner/Create
 10. What was the volume of orders for each day of the week?
 
 **B. Runner and Customer Experience**
-
 1. How many runners signed up for each one-week period? (Week starts from 2021-01-01)
 2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pick up the order?
 3. Is there any relationship between the number of pizzas and how long the order takes to prepare?
@@ -133,7 +123,6 @@ View more in the [PizzaRunner/Create_PizzaRunner_Dataset.sql](PizzaRunner/Create
 7. What is the successful delivery percentage for each runner?
 
 **C. Ingredient Optimization**
-
 1. What are the standard ingredients for each pizza?
 2. What was the most commonly added extra?
 3. What was the most common exclusion?
@@ -146,7 +135,6 @@ View more in the [PizzaRunner/Create_PizzaRunner_Dataset.sql](PizzaRunner/Create
 6. What is the total quantity of each ingredient used in all delivered pizzas, sorted by most frequent first?
 
 **D. Pricing and Ratings**
-
 1. If a Meat Lovers pizza costs $12 and Vegetarian costs $10 (no charge for changes), how much revenue has Pizza Runner made so far (excluding delivery fees)?
 2. What if there was an additional $1 charge for any pizza extras? Example: Add cheese as a $1 extra.
 3. Design an additional table for a customer rating system for runners, including a schema and sample data for successful orders (ratings from 1 to 5).
@@ -166,7 +154,6 @@ View more in the [PizzaRunner/Create_PizzaRunner_Dataset.sql](PizzaRunner/Create
 **E. Bonus Questions:** If Danny wants to expand his range of pizzas, how would this impact the existing data design? Write an INSERT statement to demonstrate what would happen if a new Supreme pizza with all toppings was added to the Pizza Runner menu.
 
 *Each question is answered in a separate SQL file stored in the [`PizzaRunner/`](PizzaRunner/) folder.*
-
 ### Highlighted Query
 ```sql
 USE PizzaRunnerDBUI;
@@ -224,10 +211,8 @@ FROM (
 WHERE customer_orders.order_number = order_details_tb.order_number;
 ```
 One of the interesting aspects of the query above is that the question is quite challenging and requires the use of several new functions like STRING_SPLIT and CONCAT_WS. Moreover, it is essential to get familiar with the syntax of CROSS APPLY (the key factor for the query to return the desired result) and the issues related to handling string data.
-
 ### Key Learnings from Danny’s Diner Case Study
 The following topics relevant to the Pizza Runner case study are covered in depth in the Serious SQL course:
-
 - Common table expressions.
 - Group by aggregates.
 - Table joins.
@@ -235,25 +220,19 @@ The following topics relevant to the Pizza Runner case study are covered in dept
 - Dealing with null values.
 - Regular expressions.
 - Understanding and using `CROSS APPLY` with `STRING_SPLIT`.
-
 ## Week 3: Foodie-Fi
 ### Introduction
 Danny saw a unique opportunity in the streaming market and launched Foodie-Fi in 2020 — a subscription-based platform dedicated solely to food-related content, offering unlimited access to exclusive cooking shows from around the world through monthly or annual plans.
 
 Built with a data-driven mindset, Foodie-Fi uses subscription data to guide key business decisions. This case study explores how digital subscription data can be analyzed to answer important business questions and support strategic growth.
-
 ### Dataset
-
 ![FoodieFi/Foodie-Fi.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/FoodieFi/Foodie-Fi.png)
 
 View more in the [FoodieFi/Create_FoodieFi_Dataset.sql](FoodieFi/Create_FoodieFi_Dataset.sql).
-
 ### Business Goals
 - *Track customer subscriptions:* Understand how customers progress through free trials, paid plans, upgrades, downgrades, and churn.
-
 - *Evaluate revenue impact:* Analyze subscription timing and payment behavior to measure revenue and identify growth opportunities.
-
-- I*mprove customer retention:* Identify key drop-off points and develop strategies to encourage plan upgrades and reduce churn.
+- *Improve customer retention:* Identify key drop-off points and develop strategies to encourage plan upgrades and reduce churn.
 
 ### Case Study Questions and SQL Scripts
 **A. Customer Journey**
@@ -261,7 +240,6 @@ View more in the [FoodieFi/Create_FoodieFi_Dataset.sql](FoodieFi/Create_FoodieFi
 Based off the 8 sample customers provided in the sample from the subscriptions table, write a brief description about each customer’s onboarding journey.
 
 Try to keep it as short as possible - you may also want to run some sort of join to make your explanations a bit easier!
-
 - *Customer 1:* Started with a free trial. After the 7-day period, the system automatically upgraded the subscription to the Pro monthly plan.
 - *Customer 2:* Started with a free trial. As the trial was about to expire, the user directly upgraded to the Pro annual plan.
 - *Customer 11:* Started with a free trial. At the end of the trial period, the customer chose to cancel the subscription and leave.
@@ -294,7 +272,6 @@ The Foodie-Fi team wants you to create a new payments table for the year 2020 th
 - once a customer churns they will no longer make payments
 
 *Each question is answered in a separate SQL file stored in the [`FoodieFi/`](FoodieFi/) folder.*
-
 ### Highlighted Query
 ``` sql
 WITH subscription_orders_tb AS (
@@ -366,13 +343,11 @@ recursive_payments_tb AS (
 ### Key Learnings from Foodie-Fi Case Study
 - **Recursive CTEs** for handling hierarchical data and performing complex traversals in self-referencing tables in SQL Server.
 - Window functions like ROW_NUMBER(), LEAD() and LAG() for ranking and calculating engagement metrics across multiple data levels.
-
 ## Week 4: Data Bank
 ### Introduction
 The rise of Neo-Banks—fully digital financial institutions without physical branches—has sparked innovation across the financial sector. Inspired by this trend, Danny launched Data Bank, a next-generation digital bank that uniquely integrates cryptocurrency, financial services, and secure distributed data storage. Unlike traditional banks, Data Bank links customers' cloud storage capacity to their account balances, creating a dynamic and data-driven ecosystem.
 
 This case study explores how Data Bank leverages data analytics to track customer behavior, forecast storage needs, and support strategic growth. By calculating key business metrics and understanding usage patterns, the company aims to expand its customer base while efficiently managing its innovative service model.
-
 ### Dataset
 ![DataBank/Data Bank.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DataBank/Data%20Bank.png)
 
@@ -521,13 +496,10 @@ Working through the Data Bank case study provided hands-on experience with advan
 - Recursive queries to efficiently solve multi-step logic problems while saving significant development time.
 - Combining recursion with functions and window operations to calculate simple and compound interest dynamically for each customer on a daily basis.
 - Using DECLARE and SET to define and assign variables, allowing for flexible adjustments to input values and enabling customized data scenarios.
-
 ## Week 5: Data Mart
 ### Introduction
 Data Mart is Danny’s newest project, focused on delivering fresh produce through an international online supermarket. In June 2020, a major operational shift introduced fully sustainable packaging across the entire supply chain. Danny now seeks analytical support to evaluate how this change has affected overall sales performance and its impact across various business segments.
-
 ### Dataset
-
 ![DataMart/Data Mart.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/DataMart/Data%20Mart.png)
 
 View more in the [DataMart/Create_DataMart_Dataset.sql](DataMart/Create_DataMart_Dataset.sql).
@@ -535,7 +507,6 @@ View more in the [DataMart/Create_DataMart_Dataset.sql](DataMart/Create_DataMart
 - *Measure impact of change:* Quantify the sales performance impact of the June 2020 sustainability update.
 - *Identify affected areas:* Determine which platforms, regions, segments, and customer types were most affected.
 - *Guide future actions:* Provide insights to help reduce potential negative impacts from similar changes in the future.
-
 ### Case Study Questions and SQL Scripts
 **A. Data Cleansing Steps:** In a single query, perform the following operations and generate a new table in the data_mart schema named clean_weekly_sales:
 - Convert the week_date to a DATE format.
@@ -582,7 +553,6 @@ Which areas of the business have the highest negative impact in sales metrics pe
 - customer_type
 
 *Each question is answered in a separate SQL file stored in the [`DataMart/`](DataMart/) folder.*
-
 ### Highlighted Query
 ```sql
 DROP TABLE IF EXISTS DataMartDBUI.dbo.clean_weekly_sales;
@@ -731,11 +701,9 @@ FROM DataMartDBUI.dbo.clean_weekly_sales;
 - Enhanced data quality by creating new calculated columns and applying functions to standardize formats, such as using CONCAT and FORMAT to modify date formats.
 - Utilized UPDATE SET for data updates and INNER JOIN to merge data from different sources for more comprehensive analysis.
 - Applied ALTER TABLE to add, modify, and drop columns based on the evolving requirements of the dataset, ensuring better structure for analysis.
-
 ## Week 6: Clique Bait
 ### Introduction
 Balanced Tree Clothing Company is a modern fashion brand known for its curated range of clothing and lifestyle wear designed for today’s adventurers. Danny, the CEO, has requested support in analyzing sales performance and preparing a financial report to inform broader business decisions.
-
 ### Dataset
 ![CliqueBait/Clique Bait.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/CliqueBait/Clique%20Bait.png)
 
@@ -744,7 +712,6 @@ View more in the [CliqueBait/Create_CliqueBait_Dataset.sql](CliqueBait/Create_Cl
 - *Digital Analysis:* Understand user behavior, event interactions, and key conversion metrics.
 - *Product Funnel:* Track product and category performance from view to purchase.
 - *Campaign Impact:* Assess how marketing campaigns influence user engagement and sales.
-
 ### Case Study Questions and SQL Scripts
 **A. Digital Analysis**
 1. How many users are there?
@@ -887,7 +854,7 @@ SELECT
 FROM campaign_conversion_rate_by_impression_tb;
 ```
 ### Key Learnings from Clique Bait Case Study
-
+Learned how to structure query results in a vertical format, where the output table becomes longer rather than wider. This was achieved using UNION ALL instead of multiple JOIN statements, making it easier to compare similar metrics across rows.
 ## Week 7: Balanced Tree Clothing Co.
 ### Introduction
 ### Dataset
