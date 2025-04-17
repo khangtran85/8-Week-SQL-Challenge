@@ -857,12 +857,106 @@ FROM campaign_conversion_rate_by_impression_tb;
 Learned how to structure query results in a vertical format, where the output table becomes longer rather than wider. This was achieved using UNION ALL instead of multiple JOIN statements, making it easier to compare similar metrics across rows.
 ## Week 7: Balanced Tree Clothing Co.
 ### Introduction
+Balanced Tree Clothing Company offers a curated range of apparel and lifestyle products tailored for the modern adventurer. To support strategic decision-making, the CEO has requested assistance in analyzing sales performance and developing a financial report to inform broader business discussions.
 ### Dataset
-### Business Goals
-### Case Study Questions and SQL Scripts
-### Highlighted Query
-### Key Learnings from Balanced Tree Clothing Co. Case Study
+![BalancedTree/Balanced Tree Clothing Company.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/BalancedTree/Balanced%20Tree%20Clothing%20Company.png)
 
+View more in the [BalancedTree/Create_BalancedTree_Dataset.sql](BalancedTree/Create_BalancedTree_Dataset.sql).
+### Business Goals
+- *Sales Overview:* Calculate total quantity sold, revenue before discounts, and total discounts.
+- *Transaction Insights:* Analyze number of transactions, average items per order, revenue percentiles, and member vs non-member behavior.
+- *Product Performance:* Identify top products, segment/category contributions, and common product combinations.
+### Case Study Questions and SQL Scripts
+**A. High Level Sales Analysis**
+1. What was the total quantity sold for all products?
+2. What is the total generated revenue for all products before discounts?
+3. What was the total discount amount for all products?
+
+**B. Transaction Analysis**
+1. How many unique transactions were there?
+2. What is the average unique products purchased in each transaction?
+3. What are the 25th, 50th and 75th percentile values for the revenue per transaction?
+4. What is the average discount value per transaction?
+5. What is the percentage split of all transactions for members vs non-members?
+6. What is the average revenue for member transactions and non-member transactions?
+
+**C. Product Analysis**
+1. What are the top 3 products by total revenue before discount?
+2. What is the total quantity, revenue and discount for each segment?
+3. What is the top selling product for each segment?
+4. What is the total quantity, revenue and discount for each category?
+5. What is the top selling product for each category?
+6. What is the percentage split of revenue by product for each segment?
+7. What is the percentage split of revenue by segment for each category?
+8. What is the percentage split of total revenue by category?
+9. What is the total transaction “penetration” for each product? (Hint: penetration = number of transactions where at least 1 quantity of a product was purchased divided by total number of transactions)
+10. What is the most common combination of at least 1 quantity of any 3 products in a 1 single transaction?
+
+**D. Reporting Challenge**
+
+Write a single SQL script that combines all of the previous questions into a scheduled report that the Balanced Tree team can run at the beginning of each month to calculate the previous month’s values.
+
+Imagine that the Chief Financial Officer (which is also Danny) has asked for all of these questions at the end of every month.
+
+He first wants you to generate the data for January only - but then he also wants you to demonstrate that you can easily run the samne analysis for February without many changes (if at all).
+
+Feel free to split up your final outputs into as many tables as you need - but be sure to explicitly reference which table outputs relate to which question for full marks :)
+
+**E. Bonus Challenge**
+
+Use a single SQL query to transform the product_hierarchy and product_prices datasets to the product_details table.
+
+Hint: you may want to consider using a recursive CTE to solve this problem!
+
+*Each question is answered in a separate SQL file stored in the [`BalancedTree/`](BalancedTree/) folder.*
+### Highlighted Query
+```sql
+WITH product_transactions_with_counts_tb AS (
+	SELECT
+		t2.id,
+		t1.prod_id,
+		t1.txn_id,
+		COUNT(t1.prod_id) OVER(PARTITION BY t1.txn_id) AS total_unique_prod_id
+	FROM sales AS t1
+	INNER JOIN product_prices AS t2
+		ON t1.prod_id = t2.product_id
+),
+cart_3_product_combinations_tb AS (
+	SELECT
+		t1.txn_id,
+		CONCAT(t1.id, ',', t2.id, ',', t3.id) AS combination_3_id,
+		CONCAT(t1.prod_id, ',', t2.prod_id, ',', t3.prod_id) AS combination_3_pro_id_in_cart
+	FROM product_transactions_with_counts_tb AS t1
+	INNER JOIN product_transactions_with_counts_tb AS t2
+		ON t1.txn_id = t2.txn_id
+		AND t1.id < t2.id
+	INNER JOIN product_transactions_with_counts_tb AS t3
+		ON t1.txn_id = t3.txn_id
+		AND t2.id < t3.id
+	WHERE t1.total_unique_prod_id >= 3
+),
+frequent_3_product_combinations_tb AS (
+	SELECT
+		combination_3_id,
+		combination_3_pro_id_in_cart,
+		COUNT(txn_id) AS frequency_combination,
+		RANK() OVER(ORDER BY COUNT(txn_id) DESC) AS ranking
+	FROM cart_3_product_combinations_tb
+	GROUP BY combination_3_id, combination_3_pro_id_in_cart
+)
+SELECT
+	DENSE_RANK() OVER(ORDER BY t1.combination_3_id ASC) AS combination_id,
+	t2.value,
+	t3.product_name,
+	t1.frequency_combination
+FROM frequent_3_product_combinations_tb AS t1
+CROSS APPLY STRING_SPLIT(t1.combination_3_pro_id_in_cart, ',') AS t2
+INNER JOIN product_details AS t3
+	ON t2.value = t3.product_id
+WHERE ranking = 1;
+```
+### Key Learnings from Balanced Tree Clothing Co. Case Study
+Learned how to use CROSS JOIN to generate all possible combinations from a list. This approach is especially useful in identifying popular product baskets or top product groupings commonly purchased together in a single transaction.
 ## Week 8: Fresh Segments
 ### Introduction
 ### Dataset
