@@ -959,9 +959,101 @@ WHERE ranking = 1;
 Learned how to use CROSS JOIN to generate all possible combinations from a list. This approach is especially useful in identifying popular product baskets or top product groupings commonly purchased together in a single transaction.
 ## Week 8: Fresh Segments
 ### Introduction
+Fresh Segments is a data-driven digital marketing agency established by Danny, aiming to support businesses in understanding their customers’ online behavior—particularly how users interact with digital advertising assets. Clients provide their customer lists to the Fresh Segments team, who then aggregate and analyze interest-based interaction data. This process results in a comprehensive dataset that reflects how different customer segments engage with various online interest categories over time.
+
+In this case study, Danny has requested assistance in analyzing an example client’s dataset. The objective is to generate meaningful insights from the aggregated monthly data, particularly focusing on how customers’ interests are distributed and ranked. This analysis will help the client better understand their audience’s preferences and inform future marketing and content strategies.
 ### Dataset
+![FreshSegments/Fresh Segments.png](https://github.com/khangtran85/8-Week-SQL-Challenge/blob/main/FreshSegments/Fresh%20Segments.png)
+
+View more in the [FreshSegments/Create_FreshSegments_Dataset.sql](FreshSegments/Create_FreshSegments_Dataset.sql).
 ### Business Goals
+- *Track Persistent Interests:* Identify interests consistently present across all months to uncover stable patterns in customer engagement.
+- *Analyze Segment Trends:* Examine changes in composition and ranking to spot high-performing and volatile interests over time.
+- *Use Index Metrics Effectively:* Apply index values to estimate average composition, highlight top monthly interests, and monitor longer-term trends.
 ### Case Study Questions and SQL Scripts
+**A. Data Exploration and Cleansing**
+1. Update the fresh_segments.interest_metrics table by modifying the month_year column to be a date data type with the start of the month.
+2. What is count of records in the fresh_segments.interest_metrics for each month_year value sorted in chronological order (earliest to latest) with the null values appearing first?
+3. What do you think we should do with these null values in the fresh_segments.interest_metrics
+4. How many interest_id values exist in the fresh_segments.interest_metrics table but not in the fresh_segments.interest_map table? What about the other way around?
+5. Summarise the id values in the fresh_segments.interest_map by its total record count in this table
+6. What sort of table join should we perform for our analysis and why? Check your logic by checking the rows where interest_id = 21246 in your joined output and include all columns from fresh_segments.interest_metrics and all columns from fresh_segments.interest_map except from the id column.
+7. Are there any records in your joined table where the month_year value is before the created_at value from the fresh_segments.interest_map table? Do you think these values are valid and why?
+
+**B. Interest Analysis**
+1. Which interests have been present in all month_year dates in our dataset?
+2. Using this same total_months measure - calculate the cumulative percentage of all records starting at 10 months - which total_months value passes the 90% cumulative percentage value?
+3. If we were to remove all interest_id values which are lower than the total_months value we found in the previous question - how many total data points would we be removing?
+4. Does this decision make sense to remove these data points from a business perspective? Use an example where there are all 14 months present to a removed interest example for your arguments - think about what it means to have less months present from a segment perspective.
+5. After removing these interests - how many unique interests are there for each month?
+
+**C. Segment Analysis**
+1. Using our filtered dataset by removing the interests with less than 6 months worth of data, which are the top 10 and bottom 10 interests which have the largest
+2. composition values in any month_year? Only use the maximum composition value for each interest but you must keep the corresponding month_year
+3. Which 5 interests had the lowest average ranking value?
+4. Which 5 interests had the largest standard deviation in their percentile_ranking value?
+5. For the 5 interests found in the previous question - what was minimum and maximum percentile_ranking values for each interest and its corresponding year_month value?
+6. an you describe what is happening for these 5 interests?
+
+**D. Index Analysis**
+
+The index_value is a measure which can be used to reverse calculate the average composition for Fresh Segments’ clients.
+
+Average composition can be calculated by dividing the composition column by the index_value column rounded to 2 decimal places.
+
+1. What is the top 10 interests by the average composition for each month?
+2. For all of these top 10 interests - which interest appears the most often?
+3. What is the average of the average composition for the top 10 interests for each month?
+4. What is the 3 month rolling average of the max average composition value from September 2018 to August 2019 and include the previous top ranking interests in the same output shown below.
+
+*Each question is answered in a separate SQL file stored in the [`FreshSegments/`](FreshSegments/) folder.*
 ### Highlighted Query
+```sql
+WITH interest_avg_composition_ranking_each_month_tb AS (
+	SELECT
+		 month_year,
+		 interest_id,
+		 composition / index_value AS avg_composition,
+		 RANK()
+			OVER(
+				PARTITION BY month_year
+				ORDER BY (composition / index_value) DESC
+			) AS ranking
+	FROM interest_metrics
+	WHERE
+		interest_id IS NOT NULL AND month_year IS NOT NULL
+		AND month_year BETWEEN DATEADD(month, -2, '2018-09-01') AND '2019-08-01'
+),
+monthly_top_interest_avg_tb AS (
+	SELECT
+		t1.month_year,
+		t1.interest_id,
+		t2.interest_name,
+		t1.avg_composition AS max_index_composition,
+		CONCAT(t2.interest_name, ': ', ROUND(t1.avg_composition, 2)) AS concat_interest_name_vs_avg_composition,
+		AVG(t1.avg_composition)
+			OVER(
+				ORDER BY t1.month_year ASC
+				ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+			) AS _3_month_moving_avg
+	FROM interest_avg_composition_ranking_each_month_tb AS t1
+	INNER JOIN interest_map AS t2
+		ON t1.interest_id = t2.id
+	WHERE t1.ranking = 1
+)
+SELECT
+	t1.month_year,
+	t1.interest_name,
+	ROUND(t1.max_index_composition, 2) AS max_index_composition,
+	ROUND(t1._3_month_moving_avg, 2) AS _3_month_moving_avg,
+	t2.concat_interest_name_vs_avg_composition AS _1_month_ago,
+	t3.concat_interest_name_vs_avg_composition AS _2_month_ago
+FROM monthly_top_interest_avg_tb AS t1
+INNER JOIN monthly_top_interest_avg_tb AS t2
+	ON t1.month_year = DATEADD(month, 1, t2.month_year)
+INNER JOIN monthly_top_interest_avg_tb AS t3
+	ON t1.month_year = DATEADD(month, 2, t3.month_year)
+ORDER BY month_year ASC;
+```
 ### Key Learnings from Fresh Segments Case Study
-# Consideration
+Learned how to use self-join to display future months relative to the current one - an alternative to using LAG when needing to compare upcoming values in time-based data.
